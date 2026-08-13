@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Map active-player session entries into round trend points.
+- [x] Add a visual reaction-time summary chart to Session history.
+- [x] Validate populated and empty chart states.
+
 - [x] Add an arena shake animation for early taps.
 - [x] Add a muted-by-toggle error sound for false starts.
 - [x] Validate the early-tap feedback state in the browser.
