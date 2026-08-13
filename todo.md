@@ -6,6 +6,11 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add hover tooltips with exact H2H reaction time and round details.
+- [x] Remove the LIVE ROOM section while preserving round naming context.
+- [x] Remove the Live multiplayer top-bar control.
+- [x] Validate hover behavior and simplified controls.
+
 - [x] Add a trophy to the faster-average H2H winner, with ties showing no winner.
 - [x] Remove the LOWER IS FASTER label from H2H.
 - [x] Remove Product Crew from persisted and displayed player data.
