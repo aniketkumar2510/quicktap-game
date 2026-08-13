@@ -6,3 +6,5 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Reproduce and diagnose the missing signal transition.
+- [x] Fix and validate reliable Signal Lime timing.

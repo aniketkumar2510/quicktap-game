@@ -58,11 +58,10 @@ export default function Home() {
       else handleArenaClick();
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.clearTimeout(timerRef.current);
-    };
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [gameState]);
+
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
 
   const armRound = () => {
     window.clearTimeout(timerRef.current);
