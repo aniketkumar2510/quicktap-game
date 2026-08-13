@@ -5,7 +5,7 @@
 - [x] Connect nickname and round settings to the active session header and progress copy.
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
-- [ ] Save an updated project checkpoint.
+- [x] Save an updated project checkpoint.
 - [x] Upgrade QuickTap to a database-backed full-stack project.
 - [x] Persist player scores and session history through typed server procedures.
 - [x] Migrate the UI from local-only persistence with a safe fallback.
@@ -64,17 +64,17 @@
 - [x] Validate sidebar label readability in light mode.
 - [x] Replace duplicate H2H chart point keys with stable unique keys.
 - [x] Validate the H2H chart no longer emits duplicate-key warnings.
-- [ ] Change light-mode accent items from neon yellow to neon purple.
-- [ ] Keep dark-mode accents neon yellow.
-- [ ] Validate both theme accent palettes.
+- [x] Change light-mode accent items from neon yellow to neon purple.
+- [x] Keep dark-mode accents neon yellow.
+- [x] Validate both theme accent palettes.
 - [x] Add a persistent dark/light theme toggle.
 - [x] Remove the Live multiplayer toggle from the bottom panel.
 - [x] Validate both themes and the simplified bottom panel.
-- [ ] Add a confirmation dialog before Reset Stats clears saved score data.
-- [ ] Validate cancel and confirm Reset Stats flows.
-- [ ] Move the Session history average readout to the chart top-right.
-- [ ] Highlight the lowest reaction time entry instead of the first entry.
-- [ ] Validate the updated chart and history list hierarchy.
+- [x] Add a confirmation dialog before Reset Stats clears saved score data.
+- [x] Validate cancel and confirm Reset Stats flows.
+- [x] Move the Session history average readout to the chart top-right.
+- [x] Highlight the lowest reaction time entry instead of the first entry.
+- [x] Validate the updated chart and history list hierarchy.
 
 - [x] Add hover tooltips with exact H2H reaction time and round details.
 - [x] Remove the LIVE ROOM section while preserving round naming context.
