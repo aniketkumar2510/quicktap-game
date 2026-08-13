@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Make Session history open a complete active-session history view.
+- [x] Remove seeded team leaderboard entries and display only logged player data.
+- [x] Validate empty states and navigation behavior.
+
 - [x] Persist session history in local storage and hydrate it on load.
 - [x] Persist player best/average/rank data for leaderboard display.
 - [x] Validate persistence after refresh.

@@ -23,7 +23,7 @@ import {
 
 type GameState = "idle" | "armed" | "live" | "result" | "false-start" | "summary";
 
-type Session = { date: string; players: number; best: number; winner: string };
+type Session = { sessionId: string; date: string; players: number; best: number; winner: string };
 type PlayerScore = { best: number; total: number; rounds: number };
 
 const STORAGE_KEYS = {
@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
   playerScores: "quicktap.player-scores.v1",
   playerName: "quicktap.player-name.v1",
   totalRounds: "quicktap.total-rounds.v1",
+  activeSession: "quicktap.active-session.v1",
 };
 
 function readStored<T>(key: string, fallback: T): T {
@@ -43,18 +44,8 @@ function readStored<T>(key: string, fallback: T): T {
   }
 }
 
-const initialSessions: Session[] = [
-  { date: "Today · 10:42", players: 8, best: 183, winner: "Green Team" },
-  { date: "Today · 09:18", players: 6, best: 201, winner: "Night Shift" },
-  { date: "Yesterday · 16:05", players: 12, best: 164, winner: "Product Crew" },
-];
-
-const leaderboard = [
-  { rank: 1, name: "Green Team", score: 1842, avg: 198, color: "lime" },
-  { rank: 2, name: "Night Shift", score: 1720, avg: 214, color: "white" },
-  { rank: 3, name: "Product Crew", score: 1604, avg: 228, color: "white" },
-  { rank: 4, name: "The Rookies", score: 1455, avg: 251, color: "white" },
-];
+const initialSessions: Session[] = [];
+const rankBenchmarks = [198, 214, 228, 251];
 
 export default function Home() {
   const [gameState, setGameState] = useState<GameState>("idle");
@@ -62,8 +53,9 @@ export default function Home() {
   const [round, setRound] = useState(1);
   const [playerName, setPlayerName] = useState(() => readStored(STORAGE_KEYS.playerName, "Alex"));
   const [totalRounds, setTotalRounds] = useState(() => readStored(STORAGE_KEYS.totalRounds, 5));
-  const [sessions, setSessions] = useState<Session[]>(() => readStored(STORAGE_KEYS.sessions, initialSessions));
-  const [playerScores, setPlayerScores] = useState<Record<string, PlayerScore>>(() => readStored(STORAGE_KEYS.playerScores, {}));
+  const [activeSessionId, setActiveSessionId] = useState(() => readStored(STORAGE_KEYS.activeSession, `session-${Date.now()}`));
+  const [sessions, setSessions] = useState<Session[]>(() => readStored<Session[]>(STORAGE_KEYS.sessions, initialSessions).filter((session) => session.winner !== "Green Team" && session.winner !== "Night Shift").map((session) => ({ ...session, sessionId: session.sessionId ?? activeSessionId })));
+  const [playerScores, setPlayerScores] = useState<Record<string, PlayerScore>>(() => Object.fromEntries(Object.entries(readStored<Record<string, PlayerScore>>(STORAGE_KEYS.playerScores, {})).filter(([name]) => name !== "Green Team" && name !== "Night Shift")));
   const [roundTimes, setRoundTimes] = useState<number[]>([]);
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
@@ -86,6 +78,10 @@ export default function Home() {
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(sessions));
   }, [sessions]);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.activeSession, JSON.stringify(activeSessionId));
+  }, [activeSessionId]);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.playerScores, JSON.stringify(playerScores));
@@ -122,7 +118,7 @@ export default function Home() {
     setRoundTimes((current) => [...current, result]);
     setGameState("result");
     const playerKey = playerName.trim() || "Unnamed player";
-    const nextSession: Session = { date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: playerKey };
+    const nextSession: Session = { sessionId: activeSessionId, date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: playerKey };
     setSessions((current) => [nextSession, ...current].slice(0, 20));
     setPlayerScores((current) => {
       const previous = current[playerKey];
@@ -152,12 +148,15 @@ export default function Home() {
     setGameState("idle");
     setRound(1);
     setRoundTimes([]);
+    setActiveSessionId(`session-${Date.now()}`);
   };
 
+  const activeSessions = sessions.filter((session) => session.sessionId === activeSessionId);
+  const playerLeaderboard = Object.entries(playerScores).map(([name, score]) => ({ name, score: score.best, avg: Math.round(score.total / score.rounds) })).sort((a, b) => a.score - b.score).map((player, index) => ({ ...player, rank: index + 1 }));
   const savedPlayer = playerScores[playerName.trim() || "Unnamed player"];
   const bestTime = roundTimes.length ? Math.min(...roundTimes) : savedPlayer?.best ?? null;
   const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : savedPlayer ? Math.round(savedPlayer.total / savedPlayer.rounds) : null;
-  const teamRank = bestTime ? Math.min(4, 1 + [198, 214, 228, 251].filter((average) => average < bestTime).length) : null;
+  const teamRank = bestTime ? Math.min(4, 1 + rankBenchmarks.filter((average) => average < bestTime).length) : null;
 
   const stateCopy = {
     idle: { kicker: "SET YOUR SESSION", title: "Choose your line-up.", sub: "Enter a nickname and choose how many rounds your team will play.", button: "Arm the round" },
@@ -182,7 +181,7 @@ export default function Home() {
         </div>
         <nav className="rail-nav" aria-label="Primary">
           <button className="rail-link active"><Zap size={15} /> Play</button>
-          <button className="rail-link" onClick={() => setShowHistory(!showHistory)}><History size={15} /> Session history</button>
+          <button className="rail-link" onClick={() => setShowHistory(true)}><History size={15} /> Session history</button>
           <button className="rail-link" onClick={() => toast("Invite link ready", { description: "Share QT-4821 with the room." })}><Users size={15} /> Invite team</button>
         </nav>
         <div className="rail-bottom">
@@ -222,10 +221,10 @@ export default function Home() {
 
       <aside className="score-panel">
         <div className="score-panel-header"><div><div className="eyebrow">TEAM LEADERBOARD</div><h2>Room momentum</h2></div><Crown size={18} className="crown" /></div>
-        <div className="leaderboard-list">{leaderboard.map((team) => <div className={`leader-row ${team.rank === 1 ? "leader" : ""}`} key={team.name}><div className="rank">{String(team.rank).padStart(2, "0")}</div><div className="team-symbol">{team.rank === 1 ? <Sparkles size={14} /> : <ShieldCheck size={14} />}</div><div className="team-details"><strong>{team.name}</strong><span>AVG {team.avg} MS</span></div><div className="team-score">{team.score.toLocaleString()}</div></div>)}</div>
+        <div className="leaderboard-list">{playerLeaderboard.length ? playerLeaderboard.map((player) => <div className={`leader-row ${player.rank === 1 ? "leader" : ""}`} key={player.name}><div className="rank">{String(player.rank).padStart(2, "0")}</div><div className="team-symbol">{player.rank === 1 ? <Sparkles size={14} /> : <ShieldCheck size={14} />}</div><div className="team-details"><strong>{player.name}</strong><span>AVG {player.avg} MS</span></div><div className="team-score">{player.score.toLocaleString()}</div></div>) : <div className="leaderboard-empty"><ShieldCheck size={15} /><span>No logged players yet.<small>Complete a round to enter the board.</small></span></div>}</div>
         <div className="score-divider" />
         <div className="panel-subhead"><span>SESSION HISTORY</span><button onClick={() => setShowHistory(!showHistory)}>{showHistory ? "Hide" : "View all"} <ArrowRight size={13} /></button></div>
-        {(showHistory ? sessions : sessions.slice(0, 2)).map((session) => <div className="history-row" key={`${session.date}-${session.best}`}><div className="history-icon"><Clock3 size={14} /></div><div className="history-details"><strong>{session.winner}</strong><span>{session.date} · {session.players} players</span></div><div className="history-best">{session.best}<small>ms</small></div></div>)}
+        {(showHistory ? activeSessions : activeSessions.slice(0, 2)).map((session) => <div className="history-row" key={`${session.date}-${session.best}`}><div className="history-icon"><Clock3 size={14} /></div><div className="history-details"><strong>{session.winner}</strong><span>{session.date} · {session.players} players</span></div><div className="history-best">{session.best}<small>ms</small></div></div>)}
         <div className="panel-footer"><div className="live-mode-toggle"><button className={isLiveMode ? "toggle-on" : ""} onClick={() => setIsLiveMode(!isLiveMode)}><span /></button><div><strong>Live multiplayer</strong><small>{isLiveMode ? "On · results sync live" : "Off · solo practice"}</small></div></div><div className="footer-activity"><div className="activity-bars"><i /><i /><i /><i /><i /></div><span>ACTIVE</span></div></div>
       </aside>
     </main>
