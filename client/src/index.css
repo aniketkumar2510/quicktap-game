@@ -27,3 +27,28 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 @media (max-width: 1050px) { .quicktap-shell { grid-template-columns: 180px minmax(0, 1fr); }.score-panel { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); padding: 22px 28px; }.leaderboard-list { grid-template-columns: repeat(4, 1fr); }.score-divider { display: none; }.panel-subhead, .history-row { display: none; }.panel-footer { margin-top: 20px; }.left-rail { padding-inline: 15px; } }
 @media (max-width: 720px) { .setup-fields { grid-template-columns: 1fr; gap: 12px; }.quicktap-shell { display: block; overflow: visible; }.left-rail { min-height: auto; height: 62px; padding: 14px 18px; border-right: 0; border-bottom: 1px solid var(--line); flex-direction: row; align-items: center; justify-content: space-between; }.brand-mark { width: 25px; height: 25px; border-width: 2px; }.brand-mark:before { height: 30px; width: 4px; }.brand-mark:after { width: 30px; height: 4px; }.brand-mark span { width: 5px; height: 5px; }.brand-caption, .rail-nav, .rail-bottom { display: none; }.mobile-menu { display: block; color: var(--muted); }.topbar { height: 58px; padding: 0 18px; }.breadcrumb { font-size: 8px; }.live-pill { padding: 7px; font-size: 8px; }.stage-content { padding: 32px 18px; }.stage-heading { display: block; margin-bottom: 25px; }.stage-heading-right { margin-top: 25px; gap: 22px; }.reaction-arena { min-height: 375px; height: 55vh; }.stage-controls { display: block; }.primary-button { width: 100%; }.control-hint { justify-content: center; margin-top: 14px; }.score-panel { padding: 25px 18px 22px; }.leaderboard-list { grid-template-columns: 1fr 1fr; margin-top: 20px; }.leader-row { min-height: 55px; }.panel-footer { padding-top: 18px; } }
 @media (prefers-reduced-motion: reduce) { *, *:before, *:after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+.theme-toggle { width: 32px; height: 32px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); display: grid; place-items: center; transition: color .18s var(--ease-out), border-color .18s var(--ease-out), background .18s var(--ease-out); }
+.theme-toggle:hover { color: var(--lime); border-color: var(--lime); }
+.theme-toggle:active { transform: scale(.97); }
+[data-theme="light"] { --ink: #f4f7f1; --panel: #ffffff; --panel-2: #e8eee6; --line: rgba(8,9,8,.16); --muted: #5c675d; --white: #101410; }
+[data-theme="light"] html, [data-theme="light"] body { background: var(--ink); }
+[data-theme="light"] .left-rail { background: #e8eee6; }
+[data-theme="light"] .main-stage { background: radial-gradient(circle at 51% 33%, rgba(111,160,0,.08), transparent 34%), var(--ink); }
+[data-theme="light"] .main-stage:after { opacity: .08; mix-blend-mode: multiply; }
+[data-theme="light"] .reaction-arena { background: rgba(255,255,255,.72); border-color: rgba(8,9,8,.2); }
+[data-theme="light"] .reaction-arena:hover { border-color: rgba(111,160,0,.65); }
+[data-theme="light"] .setup-fields input, [data-theme="light"] .setup-fields select, [data-theme="light"] .history-player-picker select { background: #ffffff; }
+[data-theme="light"] .score-panel { background: #e8eee6; }
+[data-theme="light"] .leaderboard-empty { border-color: rgba(8,9,8,.2); }
+[data-theme="light"] .history-dialog, [data-theme="light"] .h2h-dialog, [data-theme="light"] .reset-confirm-dialog { background: #f8faf6; }
+[data-theme="light"] .history-trend { background: rgba(255,255,255,.62); }
+[data-theme="light"] .history-overlay, [data-theme="light"] .reset-confirm-overlay { background: rgba(18,24,18,.38); }
+[data-theme="light"] .history-dialog-row, [data-theme="light"] .summary-row, [data-theme="light"] .leader-row { background: rgba(8,9,8,.035); }
+[data-theme="light"] .history-dialog-row.fastest, [data-theme="light"] .summary-row.highlight, [data-theme="light"] .leader-row.leader { background: rgba(111,160,0,.1); }
+[data-theme="light"] .icon-button, [data-theme="light"] .theme-toggle { background: #ffffff; }
+[data-theme="light"] .sound-toggle { background: #ffffff; }
+[data-theme="light"] .trend-chart circle { fill: var(--ink); }
+[data-theme="light"] .target-cross, [data-theme="light"] .target-cross:before, [data-theme="light"] .target-cross:after { background: var(--ink); }
+[data-theme="light"] .target-cross { border-color: var(--ink); }
+@media (max-width: 720px) { .theme-toggle { width: 30px; height: 30px; } }

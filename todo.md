@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add a persistent dark/light theme toggle.
+- [x] Remove the Live multiplayer toggle from the bottom panel.
+- [x] Validate both themes and the simplified bottom panel.
 - [ ] Add a confirmation dialog before Reset Stats clears saved score data.
 - [ ] Validate cancel and confirm Reset Stats flows.
 - [ ] Move the Session history average readout to the chart top-right.
