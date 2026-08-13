@@ -167,3 +167,7 @@
 - [x] Show the editable nickname input only when New Nickname is selected.
 - [x] Validate existing-player selection and new-nickname entry.
 - [x] Validate entering a fresh nickname while New nickname is selected.
+- [x] Filter unknown or unnamed player records from Session history.
+- [x] Exclude unknown or unnamed players from H2H selectors and comparison data.
+- [x] Validate only existing nicknames appear in Session history and H2H.
+- [x] Verify Session history shows no Unknown player or Unnamed player entries or options.

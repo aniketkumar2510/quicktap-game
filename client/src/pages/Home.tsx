@@ -31,6 +31,11 @@ type GameState = "idle" | "armed" | "live" | "result" | "false-start" | "summary
 type Session = { sessionId: string; date: string; players: number; best: number; winner: string; round?: number };
 type PlayerScore = { best: number; total: number; rounds: number };
 
+const isUsableNickname = (name: string) => {
+  const normalized = name.trim().toLowerCase();
+  return Boolean(normalized) && !["unknown", "unknown player", "unnamed", "unnamed player"].includes(normalized);
+};
+
 const STORAGE_KEYS = {
   sessions: "quicktap.sessions.v1",
   playerScores: "quicktap.player-scores.v1",
@@ -332,13 +337,14 @@ export default function Home() {
     toast.success("Session history cleared", { description: "Your saved best score was kept." });
   };
 
-  const activePlayerName = playerName.trim() || "Unnamed player";
-  const historyPlayerOptions = Array.from(new Set([activePlayerName, ...sessions.map((session) => session.winner)])).filter(Boolean).sort((a, b) => a.localeCompare(b));
-  const selectedHistoryPlayer = historyPlayerOptions.includes(historyPlayer) ? historyPlayer : activePlayerName;
+  const activePlayerName = isUsableNickname(playerName) ? playerName.trim() : "";
+  const validSessions = sessions.filter((session) => isUsableNickname(session.winner));
+  const historyPlayerOptions = Array.from(new Set([activePlayerName, ...validSessions.map((session) => session.winner.trim())])).filter(isUsableNickname).sort((a, b) => a.localeCompare(b));
+  const selectedHistoryPlayer = historyPlayerOptions.includes(historyPlayer) ? historyPlayer : activePlayerName || historyPlayerOptions[0] || "";
   const h2hPlayerOptions = historyPlayerOptions;
-  const selectedH2hPlayerA = h2hPlayerOptions.includes(h2hPlayerA) ? h2hPlayerA : activePlayerName;
+  const selectedH2hPlayerA = h2hPlayerOptions.includes(h2hPlayerA) ? h2hPlayerA : activePlayerName || h2hPlayerOptions[0] || "";
   const selectedH2hPlayerB = h2hPlayerOptions.find((name) => name === h2hPlayerB && name !== selectedH2hPlayerA) ?? h2hPlayerOptions.find((name) => name !== selectedH2hPlayerA) ?? "";
-  const getPlayerEntries = (name: string) => sessions.filter((session) => session.winner === name).slice().sort((a, b) => {
+  const getPlayerEntries = (name: string) => validSessions.filter((session) => session.winner.trim() === name).slice().sort((a, b) => {
     const sessionDelta = sessionOrder(a) - sessionOrder(b);
     return sessionDelta || ((a.round ?? 0) - (b.round ?? 0));
   });
@@ -362,12 +368,12 @@ export default function Home() {
   const h2hWorstA = h2hEntriesA.length ? Math.max(...h2hEntriesA.map((entry) => entry.best)) : 0;
   const h2hWorstB = h2hEntriesB.length ? Math.max(...h2hEntriesB.map((entry) => entry.best)) : 0;
   const h2hWinner = h2hAverageA && h2hAverageB ? (h2hAverageA < h2hAverageB ? selectedH2hPlayerA : h2hAverageB < h2hAverageA ? selectedH2hPlayerB : "") : "";
-  const activePlayerRawEntries = sessions.filter((session) => session.winner === activePlayerName);
+  const activePlayerRawEntries = validSessions.filter((session) => session.winner.trim() === activePlayerName);
   const activePlayerEntries = activePlayerRawEntries.slice().sort((a, b) => {
     const sessionDelta = sessionOrder(a) - sessionOrder(b);
     return sessionDelta || ((a.round ?? 0) - (b.round ?? 0));
   });
-  const selectedPlayerEntries = sessions.filter((session) => session.winner === selectedHistoryPlayer).slice().sort((a, b) => {
+  const selectedPlayerEntries = validSessions.filter((session) => session.winner.trim() === selectedHistoryPlayer).slice().sort((a, b) => {
     const sessionDelta = sessionOrder(a) - sessionOrder(b);
     return sessionDelta || ((a.round ?? 0) - (b.round ?? 0));
   });
@@ -382,8 +388,8 @@ export default function Home() {
     const y = 18 + ((value - trendMin) / Math.max(1, trendMax - trendMin)) * 104;
     return `${x},${y}`;
   }).join(" ");
-  const playerLeaderboard = Object.entries(playerScores).map(([name, score]) => ({ name, score: score.best, avg: Math.round(score.total / score.rounds) })).sort((a, b) => a.score - b.score).map((player, index) => ({ ...player, rank: index + 1 }));
-  const savedPlayers = Array.from(new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].filter((name) => name && name !== "Unnamed player"))).sort((a, b) => a.localeCompare(b));
+  const playerLeaderboard = Object.entries(playerScores).filter(([name]) => isUsableNickname(name)).map(([name, score]) => ({ name, score: score.best, avg: Math.round(score.total / score.rounds) })).sort((a, b) => a.score - b.score).map((player, index) => ({ ...player, rank: index + 1 }));
+  const savedPlayers = Array.from(new Set([...Object.keys(playerScores), ...validSessions.map((session) => session.winner.trim())].filter(isUsableNickname))).sort((a, b) => a.localeCompare(b));
   const savedPlayer = playerScores[activePlayerName];
   const bestTime = roundTimes.length ? Math.min(...roundTimes) : savedPlayer?.best ?? null;
   const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : savedPlayer ? Math.round(savedPlayer.total / savedPlayer.rounds) : null;
