@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [ ] Change light-mode accent items from neon yellow to neon purple.
+- [ ] Keep dark-mode accents neon yellow.
+- [ ] Validate both theme accent palettes.
 - [x] Add a persistent dark/light theme toggle.
 - [x] Remove the Live multiplayer toggle from the bottom panel.
 - [x] Validate both themes and the simplified bottom panel.
