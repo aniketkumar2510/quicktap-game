@@ -24,6 +24,24 @@ import {
 type GameState = "idle" | "armed" | "live" | "result" | "false-start" | "summary";
 
 type Session = { date: string; players: number; best: number; winner: string };
+type PlayerScore = { best: number; total: number; rounds: number };
+
+const STORAGE_KEYS = {
+  sessions: "quicktap.sessions.v1",
+  playerScores: "quicktap.player-scores.v1",
+  playerName: "quicktap.player-name.v1",
+  totalRounds: "quicktap.total-rounds.v1",
+};
+
+function readStored<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const value = window.localStorage.getItem(key);
+    return value ? (JSON.parse(value) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const initialSessions: Session[] = [
   { date: "Today · 10:42", players: 8, best: 183, winner: "Green Team" },
@@ -42,9 +60,10 @@ export default function Home() {
   const [gameState, setGameState] = useState<GameState>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
   const [round, setRound] = useState(1);
-  const [playerName, setPlayerName] = useState("Alex");
-  const [totalRounds, setTotalRounds] = useState(5);
-  const [sessions, setSessions] = useState(initialSessions);
+  const [playerName, setPlayerName] = useState(() => readStored(STORAGE_KEYS.playerName, "Alex"));
+  const [totalRounds, setTotalRounds] = useState(() => readStored(STORAGE_KEYS.totalRounds, 5));
+  const [sessions, setSessions] = useState<Session[]>(() => readStored(STORAGE_KEYS.sessions, initialSessions));
+  const [playerScores, setPlayerScores] = useState<Record<string, PlayerScore>>(() => readStored(STORAGE_KEYS.playerScores, {}));
   const [roundTimes, setRoundTimes] = useState<number[]>([]);
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
@@ -63,6 +82,22 @@ export default function Home() {
   }, [gameState]);
 
   useEffect(() => () => window.clearTimeout(timerRef.current), []);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(sessions));
+  }, [sessions]);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.playerScores, JSON.stringify(playerScores));
+  }, [playerScores]);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.playerName, JSON.stringify(playerName));
+  }, [playerName]);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.totalRounds, JSON.stringify(totalRounds));
+  }, [totalRounds]);
 
   const armRound = () => {
     window.clearTimeout(timerRef.current);
@@ -86,8 +121,20 @@ export default function Home() {
     setReactionTime(result);
     setRoundTimes((current) => [...current, result]);
     setGameState("result");
-    const nextSession: Session = { date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: playerName.trim() || "Unnamed player" };
-    setSessions((current) => [nextSession, ...current].slice(0, 6));
+    const playerKey = playerName.trim() || "Unnamed player";
+    const nextSession: Session = { date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: playerKey };
+    setSessions((current) => [nextSession, ...current].slice(0, 20));
+    setPlayerScores((current) => {
+      const previous = current[playerKey];
+      return {
+        ...current,
+        [playerKey]: {
+          best: previous ? Math.min(previous.best, result) : result,
+          total: (previous?.total ?? 0) + result,
+          rounds: (previous?.rounds ?? 0) + 1,
+        },
+      };
+    });
   };
 
   const startNext = () => {
@@ -107,9 +154,10 @@ export default function Home() {
     setRoundTimes([]);
   };
 
-  const bestTime = roundTimes.length ? Math.min(...roundTimes) : null;
+  const savedPlayer = playerScores[playerName.trim() || "Unnamed player"];
+  const bestTime = roundTimes.length ? Math.min(...roundTimes) : savedPlayer?.best ?? null;
+  const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : savedPlayer ? Math.round(savedPlayer.total / savedPlayer.rounds) : null;
   const teamRank = bestTime ? Math.min(4, 1 + [198, 214, 228, 251].filter((average) => average < bestTime).length) : null;
-  const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : null;
 
   const stateCopy = {
     idle: { kicker: "SET YOUR SESSION", title: "Choose your line-up.", sub: "Enter a nickname and choose how many rounds your team will play.", button: "Arm the round" },

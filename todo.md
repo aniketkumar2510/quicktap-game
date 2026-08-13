@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Persist session history in local storage and hydrate it on load.
+- [x] Persist player best/average/rank data for leaderboard display.
+- [x] Validate persistence after refresh.
+
 - [x] Log each completed round under the entered nickname.
 - [x] Update YOUR BEST and TEAM RANK from live session performance.
 - [x] Add a final leaderboard summary at session completion.
