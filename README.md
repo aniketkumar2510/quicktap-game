@@ -334,16 +334,11 @@ The current game implementation keeps the primary page logic in one feature page
 
 The server uses the managed full-stack runtime and should not be modified to assume a fixed production port. Production deployment should use the project’s managed hosting configuration or another environment that supplies the required server variables and database connection.
 
-## Future improvements
+## Test It Out!:
 
-Several practical extensions would fit the current architecture:
+https://quicktapgame-dsreyier.manus.space/
 
-1. Add an explicit session identifier and human-readable timestamp to improve cross-session browsing and date filtering.
-2. Add a downloadable CSV export for a player’s session history and H2H data.
-3. Add a lightweight host mode that presents a shared round prompt on a meeting-room display while participants respond from their devices.
-4. Split `Home.tsx` into focused components for the setup panel, reaction arena, history archive, and H2H comparison.
-5. Add dedicated browser-level automated tests for the randomized signal transition, keyboard reaction flow, and mobile navigation drawer.
-6. Add a server-side cleanup or migration routine for any legacy records that should be permanently removed rather than filtered at render time.
+
 
 ## License
 
