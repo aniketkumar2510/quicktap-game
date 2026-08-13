@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Allow case-variant nicknames such as Lewis and lewis to coexist.
+- [x] Remove duplicate nickname blocking for case variants.
+- [x] Delete only the exact selected nickname with case-sensitive matching.
+- [x] Validate Lewis and lewis deletion isolation.
 - [x] Keep dark-mode warning and suggestion accents neon yellow.
 - [x] Delete only the exact selected nickname, including similar names such as AK and akk.
 - [x] Switch to another existing player after deleting the active player.

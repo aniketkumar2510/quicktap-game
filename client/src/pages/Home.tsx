@@ -166,23 +166,15 @@ export default function Home() {
 
   const getNicknameSuggestions = (seed: string) => {
     const base = seed.trim().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, " ").slice(0, 14) || "Player";
-    const taken = new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].map((name) => name.trim().toLowerCase()));
-    return [`${base}2`, `${base}01`, `${base}Prime`, `${base}Pro`, `${base}Team`].filter((name, index, list) => !taken.has(name.toLowerCase()) && list.indexOf(name) === index).slice(0, 3);
+    const taken = new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].map((name) => name.trim()));
+    return [`${base}2`, `${base}01`, `${base}Prime`, `${base}Pro`, `${base}Team`].filter((name, index, list) => !taken.has(name) && list.indexOf(name) === index).slice(0, 3);
   };
 
   const armRound = () => {
     const normalizedName = playerName.trim();
-    const taken = new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].map((name) => name.trim().toLowerCase()));
-    const isChangingNickname = normalizedName.toLowerCase() !== sessionNickname.trim().toLowerCase();
     if (!normalizedName) {
       setNicknameError("Enter a nickname before starting.");
       setNicknameSuggestions([]);
-      setSelectedNicknameSuggestion(0);
-      return;
-    }
-    if (isChangingNickname && taken.has(normalizedName.toLowerCase())) {
-      setNicknameError(`“${normalizedName}” is already taken.`);
-      setNicknameSuggestions(getNicknameSuggestions(normalizedName));
       setSelectedNicknameSuggestion(0);
       return;
     }
@@ -273,13 +265,12 @@ export default function Home() {
   const deleteHistoryPlayer = () => {
     const playerKey = selectedHistoryPlayer.trim();
     if (!playerKey) return;
-    const normalizedKey = playerKey.toLowerCase();
-    const remainingSessions = sessions.filter((session) => session.winner.trim().toLowerCase() !== normalizedKey);
-    const remainingScores = Object.fromEntries(Object.entries(playerScores).filter(([name]) => name.trim().toLowerCase() !== normalizedKey));
-    const remainingNames = Array.from(new Set([...remainingSessions.map((session) => session.winner.trim()), ...Object.keys(remainingScores).map((name) => name.trim())])).filter((name) => name && name.toLowerCase() !== normalizedKey).sort((a, b) => a.localeCompare(b));
+    const remainingSessions = sessions.filter((session) => session.winner.trim() !== playerKey);
+    const remainingScores = Object.fromEntries(Object.entries(playerScores).filter(([name]) => name.trim() !== playerKey));
+    const remainingNames = Array.from(new Set([...remainingSessions.map((session) => session.winner.trim()), ...Object.keys(remainingScores).map((name) => name.trim())])).filter((name) => name && name !== playerKey).sort((a, b) => a.localeCompare(b));
     setSessions(remainingSessions);
     setPlayerScores(remainingScores);
-    if (playerKey.toLowerCase() === activePlayerName.trim().toLowerCase()) {
+    if (playerKey === activePlayerName.trim()) {
       const nextPlayer = remainingNames[0] ?? "";
       setPlayerName(nextPlayer);
       setSessionNickname(nextPlayer);
