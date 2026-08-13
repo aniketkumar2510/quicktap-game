@@ -45,7 +45,6 @@ function readStored<T>(key: string, fallback: T): T {
 }
 
 const initialSessions: Session[] = [];
-const rankBenchmarks = [198, 214, 228, 251];
 
 export default function Home() {
   const [gameState, setGameState] = useState<GameState>("idle");
@@ -151,12 +150,28 @@ export default function Home() {
     setActiveSessionId(`session-${Date.now()}`);
   };
 
+  const resetStats = () => {
+    const playerKey = playerName.trim() || "Unnamed player";
+    setPlayerScores((current) => {
+      const next = { ...current };
+      delete next[playerKey];
+      return next;
+    });
+    setSessions((current) => current.filter((session) => session.winner !== playerKey));
+    setRoundTimes([]);
+    setReactionTime(null);
+    setRound(1);
+    setGameState("idle");
+    toast.success("Stats reset", { description: `${playerKey}'s saved best and active-session entries were cleared.` });
+  };
+
   const activeSessions = sessions.filter((session) => session.sessionId === activeSessionId);
-  const playerLeaderboard = Object.entries(playerScores).map(([name, score]) => ({ name, score: score.best, avg: Math.round(score.total / score.rounds) })).sort((a, b) => a.score - b.score).map((player, index) => ({ ...player, rank: index + 1 }));
-  const savedPlayer = playerScores[playerName.trim() || "Unnamed player"];
+  const playerLeaderboard = Object.entries(playerScores).map(([name, score]) => ({ name, score: score.best, avg: Math.round(score.total / score.rounds) })).sort((a, b) => a.score - b.score);
+  const activePlayerName = playerName.trim() || "Unnamed player";
+  const activePlayer = playerLeaderboard.find((player) => player.name === activePlayerName);
+  const savedPlayer = playerScores[activePlayerName];
   const bestTime = roundTimes.length ? Math.min(...roundTimes) : savedPlayer?.best ?? null;
   const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : savedPlayer ? Math.round(savedPlayer.total / savedPlayer.rounds) : null;
-  const teamRank = bestTime ? Math.min(4, 1 + rankBenchmarks.filter((average) => average < bestTime).length) : null;
 
   const stateCopy = {
     idle: { kicker: "SET YOUR SESSION", title: "Choose your line-up.", sub: "Enter a nickname and choose how many rounds your team will play.", button: "Arm the round" },
@@ -201,7 +216,7 @@ export default function Home() {
         <div className="stage-content">
           <div className="stage-heading">
             <div><div className="eyebrow"><span className="lime-dash" /> ROUND {String(round).padStart(2, "0")} / {String(totalRounds).padStart(2, "0")}</div><h1>Make your move<br /><em>count.</em></h1></div>
-            <div className="stage-heading-right"><div className="mini-stat"><span>YOUR BEST</span><strong>{bestTime ?? "—"} <small>{bestTime ? "ms" : "waiting"}</small></strong></div><div className="mini-stat"><span>TEAM RANK</span><strong>#{teamRank ?? "—"} <small>of 04</small></strong></div></div>
+            <div className="stage-heading-right"><div className="mini-stat"><span>YOUR BEST</span><strong>{bestTime ?? "—"} <small>{bestTime ? "ms" : "waiting"}</small></strong></div><button className="stats-reset" onClick={resetStats}><RotateCcw size={13} /> Reset stats</button></div>
           </div>
 
           <div className={`reaction-arena state-${gameState}`} onClick={handleArenaClick} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && handleArenaClick()} aria-label="Reaction game arena">
@@ -209,7 +224,7 @@ export default function Home() {
             <div className="arena-corner corner-tl">WAIT TIME<br /><span>1.35 — 3.55 SEC</span></div>
             <div className="arena-corner corner-tr">INPUT<br /><span>POINTER / SPACE</span></div>
             <div className="arena-center">
-              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "summary" ? <div className="summary-readout"><div className="result-label">FINAL LEADERBOARD</div><div className="summary-title">{playerName || "Unnamed player"}</div><div className="summary-metrics"><div><span>BEST</span><strong>{bestTime ?? "—"}<small>ms</small></strong></div><div><span>AVG</span><strong>{sessionAverage ?? "—"}<small>ms</small></strong></div><div><span>RANK</span><strong>#{teamRank ?? "—"}</strong></div></div><div className="summary-list"><div className="summary-row highlight"><span>01</span><strong>{playerName || "Unnamed player"}</strong><b>{bestTime ?? "—"}<small>ms</small></b></div><div className="summary-row"><span>02</span><strong>Green Team</strong><b>198<small>ms</small></b></div><div className="summary-row"><span>03</span><strong>Night Shift</strong><b>214<small>ms</small></b></div></div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
+              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "summary" ? <div className="summary-readout"><div className="result-label">FINAL LEADERBOARD</div><div className="summary-title">{playerName || "Unnamed player"}</div><div className="summary-metrics"><div><span>BEST</span><strong>{bestTime ?? "—"}<small>ms</small></strong></div><div><span>AVG</span><strong>{sessionAverage ?? "—"}<small>ms</small></strong></div></div><div className="summary-list"><div className="summary-row highlight"><span>01</span><strong>{playerName || "Unnamed player"}</strong><b>{bestTime ?? "—"}<small>ms</small></b></div></div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
             </div>
             <div className="arena-corner corner-bl">SESSION<br /><span>TEAM / {String(totalRounds).padStart(2, "0")} ROUNDS</span></div>
             <div className="arena-corner corner-br"><Keyboard size={13} /> SPACEBAR ENABLED</div>
@@ -221,7 +236,7 @@ export default function Home() {
 
       <aside className="score-panel">
         <div className="score-panel-header"><div><div className="eyebrow">TEAM LEADERBOARD</div><h2>Room momentum</h2></div><Crown size={18} className="crown" /></div>
-        <div className="leaderboard-list">{playerLeaderboard.length ? playerLeaderboard.map((player) => <div className={`leader-row ${player.rank === 1 ? "leader" : ""}`} key={player.name}><div className="rank">{String(player.rank).padStart(2, "0")}</div><div className="team-symbol">{player.rank === 1 ? <Sparkles size={14} /> : <ShieldCheck size={14} />}</div><div className="team-details"><strong>{player.name}</strong><span>AVG {player.avg} MS</span></div><div className="team-score">{player.score.toLocaleString()}</div></div>) : <div className="leaderboard-empty"><ShieldCheck size={15} /><span>No logged players yet.<small>Complete a round to enter the board.</small></span></div>}</div>
+        <div className="leaderboard-list">{activePlayer ? <div className="leader-row leader"><div className="rank">01</div><div className="team-symbol"><Sparkles size={14} /></div><div className="team-details"><strong>{activePlayer.name}</strong><span>AVG {activePlayer.avg} MS</span></div><div className="team-score">{activePlayer.score.toLocaleString()}</div></div> : <div className="leaderboard-empty"><ShieldCheck size={15} /><span>No logged stats yet.<small>Complete a round to enter your board.</small></span></div>}</div>
         <div className="score-divider" />
         <div className="panel-subhead"><span>SESSION HISTORY</span><button onClick={() => setShowHistory(!showHistory)}>{showHistory ? "Hide" : "View all"} <ArrowRight size={13} /></button></div>
         {(showHistory ? activeSessions : activeSessions.slice(0, 2)).map((session) => <div className="history-row" key={`${session.date}-${session.best}`}><div className="history-icon"><Clock3 size={14} /></div><div className="history-details"><strong>{session.winner}</strong><span>{session.date} · {session.players} players</span></div><div className="history-best">{session.best}<small>ms</small></div></div>)}
