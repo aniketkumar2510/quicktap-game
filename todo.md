@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add a mobile menu control for the left navigation.
+- [x] Make mobile navigation items selectable and dismissible.
+- [x] Validate mobile navigation at narrow viewport sizes.
 - [x] Add exact-value and date hover tooltips to Session history chart points.
 - [x] Add exact-value and date hover tooltips to H2H chart points.
 - [x] Validate chart tooltip behavior in both themes.

@@ -21,6 +21,7 @@ import {
   Sun,
   Trophy,
   Users,
+  X,
   Zap,
 } from "lucide-react";
 
@@ -69,6 +70,7 @@ export default function Home() {
   const [roundTimes, setRoundTimes] = useState<number[]>([]);
   const [theme, setTheme] = useState<"dark" | "light">(() => readStored(STORAGE_KEYS.theme, "dark"));
   const [showHistory, setShowHistory] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
   const [historyPlayer, setHistoryPlayer] = useState("");
   const [showH2H, setShowH2H] = useState(false);
   const [showResetStatsDialog, setShowResetStatsDialog] = useState(false);
@@ -365,22 +367,22 @@ export default function Home() {
 
   return (
     <main className="quicktap-shell">
-      <aside className="left-rail">
+      <aside className={`left-rail ${showMobileNav ? "mobile-nav-open" : ""}`}>
         <div className="brand-lockup">
           <div className="brand-mark" aria-hidden="true"><span /></div>
           <div><div className="brand-name">QUICK<span>TAP</span></div><div className="brand-caption">REACTION / TEAM MODE</div></div>
         </div>
-        <nav className="rail-nav" aria-label="Primary">
+        <nav id="mobile-primary-nav" className="rail-nav" aria-label="Primary">
           <button className="rail-link play-link active"><Zap size={15} /> Play</button>
-          <button className="rail-link" onClick={() => setShowHistory(true)}><History size={15} /> Session history</button>
-          <button className="rail-link" onClick={() => setShowH2H(true)}><Users size={15} /> H2H</button>
+          <button className="rail-link" onClick={() => { setShowHistory(true); setShowMobileNav(false); }}><History size={15} /> Session history</button>
+          <button className="rail-link" onClick={() => { setShowH2H(true); setShowMobileNav(false); }}><Users size={15} /> H2H</button>
         </nav>
         <div className="rail-bottom round-context"><div className="room-note">ROUND CONTEXT<br /><strong>{playerName}</strong> · Round {round} of {totalRounds}</div></div>
       </aside>
 
       <section className="main-stage">
         <header className="topbar">
-          <div className="mobile-menu"><Menu size={20} /></div>
+          <button className="mobile-menu" type="button" onClick={() => setShowMobileNav((value) => !value)} aria-expanded={showMobileNav} aria-controls="mobile-primary-nav" aria-label={showMobileNav ? "Close navigation menu" : "Open navigation menu"}>{showMobileNav ? <X size={20} /> : <Menu size={20} />}</button>
           <div className="breadcrumb"><span>MEETING ROOM</span><ArrowRight size={13} /><strong>QUICKTAP</strong></div>
           <div className="topbar-actions"><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
         </header>
