@@ -134,3 +134,7 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .nickname-warning > span, [data-theme="light"] .nickname-warning .suggestion-hint { color: #101410 !important; }
 [data-theme="light"] .nickname-suggestions button { background: #ffffff; color: #8f179f; border-color: #8f179f; }
 [data-theme="light"] .nickname-suggestions button:hover, [data-theme="light"] .nickname-suggestions button:focus-visible, [data-theme="light"] .nickname-suggestions button.suggestion-selected { background: #d946ef; color: #101410; }
+
+[data-theme="dark"] .nickname-warning strong { color: var(--lime); }
+[data-theme="dark"] .nickname-suggestions button { color: var(--lime); border-color: var(--lime); }
+[data-theme="dark"] .nickname-suggestions button:hover, [data-theme="dark"] .nickname-suggestions button:focus-visible, [data-theme="dark"] .nickname-suggestions button.suggestion-selected { background: var(--lime); color: var(--ink); }

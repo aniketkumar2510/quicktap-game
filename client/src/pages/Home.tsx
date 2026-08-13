@@ -271,18 +271,18 @@ export default function Home() {
   };
 
   const deleteHistoryPlayer = () => {
-    const playerKey = selectedHistoryPlayer;
+    const playerKey = selectedHistoryPlayer.trim();
     if (!playerKey) return;
-    setSessions((current) => current.filter((session) => session.winner.trim().toLowerCase() !== playerKey.trim().toLowerCase()));
-    setPlayerScores((current) => {
-      const next = { ...current };
-      const matchingKey = Object.keys(next).find((name) => name.trim().toLowerCase() === playerKey.trim().toLowerCase());
-      if (matchingKey) delete next[matchingKey];
-      return next;
-    });
-    if (playerKey.trim().toLowerCase() === activePlayerName.trim().toLowerCase()) {
-      setPlayerName("");
-      setSessionNickname("");
+    const normalizedKey = playerKey.toLowerCase();
+    const remainingSessions = sessions.filter((session) => session.winner.trim().toLowerCase() !== normalizedKey);
+    const remainingScores = Object.fromEntries(Object.entries(playerScores).filter(([name]) => name.trim().toLowerCase() !== normalizedKey));
+    const remainingNames = Array.from(new Set([...remainingSessions.map((session) => session.winner.trim()), ...Object.keys(remainingScores).map((name) => name.trim())])).filter((name) => name && name.toLowerCase() !== normalizedKey).sort((a, b) => a.localeCompare(b));
+    setSessions(remainingSessions);
+    setPlayerScores(remainingScores);
+    if (playerKey.toLowerCase() === activePlayerName.trim().toLowerCase()) {
+      const nextPlayer = remainingNames[0] ?? "";
+      setPlayerName(nextPlayer);
+      setSessionNickname(nextPlayer);
       setRoundTimes([]);
       setReactionTime(null);
       setRound(1);

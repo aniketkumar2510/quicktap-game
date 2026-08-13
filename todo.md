@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Keep dark-mode warning and suggestion accents neon yellow.
+- [x] Delete only the exact selected nickname, including similar names such as AK and akk.
+- [x] Switch to another existing player after deleting the active player.
+- [x] Validate multi-player deletion and accent behavior.
 - [x] Restore high-contrast nickname warning and suggestion options in both themes.
 - [x] Replace the user-delete browser prompt with a themed in-app dialog.
 - [x] Prevent deleting a player from creating or switching to Alex.
