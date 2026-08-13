@@ -6,6 +6,8 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [ ] Add a confirmation dialog before Reset Stats clears saved score data.
+- [ ] Validate cancel and confirm Reset Stats flows.
 - [ ] Move the Session history average readout to the chart top-right.
 - [ ] Highlight the lowest reaction time entry instead of the first entry.
 - [ ] Validate the updated chart and history list hierarchy.
