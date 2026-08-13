@@ -59,3 +59,5 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 
 [data-theme="light"] .rail-link, [data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { color: #101410; }
 [data-theme="light"] .rail-link.play-link, [data-theme="light"] .rail-link.play-link:hover, [data-theme="light"] .rail-link.play-link.active { color: #ffffff; }
+
+[data-theme="light"] .rail-link:not(.play-link):hover, [data-theme="light"] .rail-link:not(.play-link).active { color: #101410; background: #ffffff; }

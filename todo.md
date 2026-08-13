@@ -6,6 +6,8 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Keep light-mode Session history and H2H text readable on hover.
+- [x] Validate sidebar hover contrast in light mode.
 - [x] Make the light-mode live arena fill neon purple.
 - [x] Remove the centered spacebar prompt from the live arena.
 - [x] Validate the live arena appearance in both themes.
