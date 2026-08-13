@@ -210,6 +210,12 @@ export default function Home() {
     armRound();
   };
 
+  const toggleTheme = () => {
+    document.documentElement.classList.add("theme-transition");
+    setTheme((value) => value === "dark" ? "light" : "dark");
+    window.setTimeout(() => document.documentElement.classList.remove("theme-transition"), 380);
+  };
+
   const reset = () => {
     window.clearTimeout(timerRef.current);
     setReactionTime(null);
@@ -332,7 +338,7 @@ export default function Home() {
         <header className="topbar">
           <div className="mobile-menu"><Menu size={20} /></div>
           <div className="breadcrumb"><span>MEETING ROOM</span><ArrowRight size={13} /><strong>QUICKTAP</strong></div>
-          <div className="topbar-actions"><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="theme-toggle" onClick={() => setTheme((value) => value === "dark" ? "light" : "dark")} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
+          <div className="topbar-actions"><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
         </header>
 
         <div className="stage-content">
@@ -357,7 +363,7 @@ export default function Home() {
       </section>
 
       <aside className="score-panel">
-        <div className="score-panel-header"><div><div className="eyebrow">TEAM LEADERBOARD</div><h2>Room momentum</h2></div><Crown size={18} className="crown" /></div>
+        <div className="score-panel-header"><div><div className="eyebrow">LEADERBOARD</div><h2>TOP SCORES</h2></div><Crown size={18} className="crown" /></div>
         <div className="leaderboard-list">{playerLeaderboard.length ? playerLeaderboard.map((player) => <div className={`leader-row ${player.name === activePlayerName ? "leader" : ""}`} key={player.name}><div className="rank">{String(player.rank).padStart(2, "0")}</div><div className="team-symbol">{player.rank === 1 ? <Sparkles size={14} /> : <ShieldCheck size={14} />}</div><div className="team-details"><strong>{player.name}</strong><span>AVG {player.avg} MS</span></div><div className="team-score">{player.score.toLocaleString()}</div></div>) : <div className="leaderboard-empty"><ShieldCheck size={15} /><span>No logged stats yet.<small>Complete a round to enter your board.</small></span></div>}</div>
         <div className="score-divider" />
         <div className="panel-subhead"><span>SESSION HISTORY</span><button onClick={() => setShowHistory(!showHistory)}>{showHistory ? "Hide" : "View all"} <ArrowRight size={13} /></button></div>

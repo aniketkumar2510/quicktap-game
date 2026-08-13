@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add a smooth dark/light mode transition.
+- [x] Rename TEAM LEADERBOARD to LEADERBOARD.
+- [x] Rename Room momentum to TOP SCORES.
+- [x] Validate theme switching and updated leaderboard copy.
 - [x] Keep light-mode Session history and H2H text readable on hover.
 - [x] Validate sidebar hover contrast in light mode.
 - [x] Make the light-mode live arena fill neon purple.
