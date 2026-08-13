@@ -171,3 +171,8 @@
 - [x] Exclude unknown or unnamed players from H2H selectors and comparison data.
 - [x] Validate only existing nicknames appear in Session history and H2H.
 - [x] Verify Session history shows no Unknown player or Unnamed player entries or options.
+- [x] Create a detailed GitHub README documenting QuickTap features, gameplay, architecture, setup, and testing.
+- [x] Review the README against the current implementation and deliver it.
+- [x] Correct README nickname behavior so it does not claim duplicate-name blocking unless implemented.
+- [x] Correct README Clear Session History confirmation wording to match the current browser confirmation behavior.
+- [x] Re-review README against the current client, server, schema, and package configuration.
