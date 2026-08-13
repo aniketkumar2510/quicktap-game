@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Repair Session history access and view state.
+- [x] Add a reliable empty history state after reset.
+- [x] Validate history navigation in the browser.
+
 - [x] Remove TEAM RANK from the interface and session summary.
 - [x] Limit the final leaderboard to the active player only.
 - [x] Add a reset-stats control for the active player.
