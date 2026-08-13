@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add shake animation and red border for taken nickname submissions.
+- [x] Add arrow-key and Enter navigation for nickname suggestions.
+- [x] Add confirmed per-user deletion inside Session history.
+- [x] Validate all new nickname and deletion flows.
 - [x] Fix taken-nickname warning text visibility in both themes.
 - [x] Fix available-nickname suggestion button visibility in both themes.
 - [x] Validate the nickname warning state from the provided screenshot scenario.

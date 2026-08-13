@@ -111,3 +111,14 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .nickname-warning > span { color: #101410; }
 [data-theme="light"] .nickname-suggestions button { background: #ffffff; color: #8f179f; border-color: #8f179f; }
 [data-theme="light"] .nickname-suggestions button:hover, [data-theme="light"] .nickname-suggestions button:focus-visible { background: #d946ef; color: #101410; }
+
+.nickname-input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239,68,68,.18); animation: nickname-shake .34s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes nickname-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+.nickname-suggestions button.suggestion-selected { background: var(--accent); color: var(--ink); box-shadow: 0 0 0 2px rgba(var(--accent-rgb), .18); }
+.suggestion-hint { display: block; margin-top: 8px; color: var(--muted) !important; font: 500 8px 'IBM Plex Mono', monospace; letter-spacing: .04em; }
+.history-player-picker { grid-template-columns: auto minmax(130px, 1fr) auto; }
+.history-delete-player { border: 1px solid rgba(var(--warning-rgb), .65); background: transparent; color: var(--warning); padding: 9px 10px; font: 600 8px 'IBM Plex Mono', monospace; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+.history-delete-player:hover, .history-delete-player:focus-visible { background: var(--warning); color: var(--ink); outline: none; }
+[data-theme="light"] .nickname-input-error { border-color: #dc2626 !important; box-shadow: 0 0 0 2px rgba(220,38,38,.18); }
+@media (max-width: 520px) { .history-player-picker { grid-template-columns: 1fr; align-items: stretch; } .history-player-picker span { margin-bottom: -2px; } .history-delete-player { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .nickname-input-error { animation: none; } }
