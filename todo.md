@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [ ] Move the Session history average readout to the chart top-right.
+- [ ] Highlight the lowest reaction time entry instead of the first entry.
+- [ ] Validate the updated chart and history list hierarchy.
+
 - [x] Add hover tooltips with exact H2H reaction time and round details.
 - [x] Remove the LIVE ROOM section while preserving round naming context.
 - [x] Remove the Live multiplayer top-bar control.
