@@ -163,3 +163,7 @@
 - [x] Use a shared QuickTap database workspace key across devices instead of browser-specific owner keys.
 - [x] Add an existing-player nickname dropdown while preserving free-text new-player entry.
 - [x] Validate published/mobile data rehydration and new-player creation behavior.
+- [x] Remove the plus sign from the New Nickname dropdown option.
+- [x] Show the editable nickname input only when New Nickname is selected.
+- [x] Validate existing-player selection and new-nickname entry.
+- [x] Validate entering a fresh nickname while New nickname is selected.
