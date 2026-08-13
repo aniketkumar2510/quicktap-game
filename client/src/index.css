@@ -122,3 +122,26 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .nickname-input-error { border-color: #dc2626 !important; box-shadow: 0 0 0 2px rgba(220,38,38,.18); }
 @media (max-width: 520px) { .history-player-picker { grid-template-columns: 1fr; align-items: stretch; } .history-player-picker span { margin-bottom: -2px; } .history-delete-player { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .nickname-input-error { animation: none; } }
+
+.nickname-availability { display: block; margin-top: 6px; font: 700 8px 'IBM Plex Mono', monospace; letter-spacing: .04em; }
+.nickname-availability.is-available { color: #65a30d; }
+.nickname-availability.is-taken { color: #ef4444; }
+.nickname-warning { min-width: 0; background: #151815; color: #ffffff; }
+.nickname-warning strong, .nickname-warning > span, .suggestion-hint { opacity: 1; }
+.nickname-suggestions { align-items: center; }
+.nickname-suggestions button { min-width: 64px; min-height: 30px; background: #0d100d; color: #d946ef; border-width: 2px; opacity: 1; }
+.nickname-suggestions button.suggestion-selected { background: #d946ef; color: #101410; }
+[data-theme="light"] .nickname-warning { background: #ffffff; color: #101410; border-color: #b423c9; }
+[data-theme="light"] .nickname-warning > span, [data-theme="light"] .suggestion-hint { color: #101410 !important; }
+[data-theme="light"] .nickname-suggestions button { background: #ffffff; color: #8f179f; border-color: #8f179f; }
+[data-theme="light"] .nickname-suggestions button.suggestion-selected { background: #d946ef; color: #101410; }
+.history-bulk-tools { margin-top: 14px; padding: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.025); }
+.history-bulk-list { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.history-bulk-list label { display: inline-flex; align-items: center; gap: 6px; color: var(--white); font: 600 9px 'IBM Plex Mono', monospace; cursor: pointer; }
+.history-bulk-list input { accent-color: var(--accent); }
+.history-bulk-delete { margin-top: 11px; border: 1px solid var(--warning); background: transparent; color: var(--warning); padding: 8px 10px; font: 600 8px 'IBM Plex Mono', monospace; letter-spacing: .06em; text-transform: uppercase; }
+.history-bulk-delete:not(:disabled):hover { background: var(--warning); color: var(--ink); }
+.history-bulk-delete:disabled { opacity: .4; cursor: not-allowed; }
+[data-theme="light"] .history-bulk-tools { background: #ffffff; border-color: rgba(8,9,8,.2); }
+[data-theme="light"] .history-bulk-list label { color: #101410; }
+.delete-players-dialog { border-color: rgba(var(--warning-rgb), .7); }
