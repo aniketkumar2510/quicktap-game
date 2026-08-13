@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Make Session history chart lines and reference lines visible in light mode.
+- [x] Make H2H chart lines, grid lines, and labels visible in light mode.
+- [x] Validate both chart views in light mode.
 - [x] Allow case-variant nicknames such as Lewis and lewis to coexist.
 - [x] Remove duplicate nickname blocking for case variants.
 - [x] Delete only the exact selected nickname with case-sensitive matching.

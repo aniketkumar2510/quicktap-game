@@ -138,3 +138,16 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="dark"] .nickname-warning strong { color: var(--lime); }
 [data-theme="dark"] .nickname-suggestions button { color: var(--lime); border-color: var(--lime); }
 [data-theme="dark"] .nickname-suggestions button:hover, [data-theme="dark"] .nickname-suggestions button:focus-visible, [data-theme="dark"] .nickname-suggestions button.suggestion-selected { background: var(--lime); color: var(--ink); }
+
+/* Light-mode chart contrast: every plotted element must remain visible on the pale surface. */
+[data-theme="light"] .history-trend, [data-theme="light"] .h2h-chart-panel { background: #ffffff; border-color: rgba(8,9,8,.28); }
+[data-theme="light"] .trend-chart line, [data-theme="light"] .h2h-chart line { stroke: rgba(8,9,8,.28); stroke-width: 1.2; }
+[data-theme="light"] .trend-chart .trend-average, [data-theme="light"] .h2h-chart .h2h-average-a { stroke: #8f179f; stroke-width: 1.8; stroke-dasharray: 5 4; }
+[data-theme="light"] .trend-chart polyline, [data-theme="light"] .h2h-chart .h2h-line-a { stroke: #b423c9; stroke-width: 3; }
+[data-theme="light"] .trend-chart circle, [data-theme="light"] .h2h-chart .h2h-dot-a { fill: #ffffff; stroke: #b423c9; stroke-width: 2.5; }
+[data-theme="light"] .trend-chart text, [data-theme="light"] .trend-chart .trend-average-label { fill: #3e4941; }
+[data-theme="light"] .h2h-chart .h2h-line-b { stroke: #26332b; stroke-width: 3; stroke-dasharray: 7 4; }
+[data-theme="light"] .h2h-chart .h2h-dot-b { fill: #ffffff; stroke: #26332b; stroke-width: 2.5; }
+[data-theme="light"] .h2h-chart .h2h-average-b { stroke: #26332b; stroke-width: 1.8; stroke-dasharray: 4 4; }
+[data-theme="light"] .h2h-chart .h2h-label-a { fill: #8f179f; }
+[data-theme="light"] .h2h-chart .h2h-label-b { fill: #26332b; }
