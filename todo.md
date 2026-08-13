@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Make the light-mode live arena fill neon purple.
+- [x] Remove the centered spacebar prompt from the live arena.
+- [x] Validate the live arena appearance in both themes.
 - [x] Make only the light-mode Play sidebar item white.
 - [x] Return other light-mode sidebar labels to black.
 - [x] Add a prominent visible spacebar prompt during the live reaction state.
