@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Make only the light-mode Play sidebar item white.
+- [x] Return other light-mode sidebar labels to black.
+- [x] Add a prominent visible spacebar prompt during the live reaction state.
+- [x] Validate sidebar contrast and live reaction visibility.
 - [x] Make light-mode sidebar navigation labels white for overlap contrast.
 - [x] Validate sidebar label readability in light mode.
 - [x] Replace duplicate H2H chart point keys with stable unique keys.

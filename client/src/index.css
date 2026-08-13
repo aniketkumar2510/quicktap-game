@@ -55,3 +55,10 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 
 [data-theme="light"] .rail-link, [data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { color: #ffffff; }
 [data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { background: #111511; }
+
+[data-theme="light"] .rail-link, [data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { color: #101410; }
+[data-theme="light"] .rail-link.play-link, [data-theme="light"] .rail-link.play-link:hover, [data-theme="light"] .rail-link.play-link.active { color: #ffffff; }
+.live-prompt { display: inline-flex; align-items: center; gap: 9px; margin-top: 18px; padding: 10px 13px; border: 1px solid rgba(8,9,8,.52); background: rgba(8,9,8,.14); color: var(--ink); font: 700 10px 'IBM Plex Mono', monospace; letter-spacing: .09em; box-shadow: 0 0 0 4px rgba(8,9,8,.06); animation: live-prompt-pulse 1.15s ease-in-out infinite; }
+.live-keycap { border: 1px solid currentColor; padding: 5px 7px; font-size: 9px; line-height: 1; }
+@keyframes live-prompt-pulse { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.035); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .live-prompt { animation: none; } }
