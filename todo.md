@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add a player dropdown to Session history.
+- [x] Render the selected player’s cross-session archive and trend.
+- [x] Validate switching between multiple player archives.
+
 - [x] Accumulate all sessions for the active nickname in one history archive.
 - [x] Aggregate the active nickname’s trend across session boundaries.
 - [x] Validate multiple sessions under one nickname and Clear Session History.
