@@ -62,3 +62,9 @@ The mark is a bold four-arm crosshair built from two offset rectangular strokes,
 
 ## Signature Brand Color
 **Signal Lime — #B6FF00.** It is bright enough to read instantly on black, but more acidic and ownable than a generic green.
+
+## Style Decisions
+
+- Millisecond numerals and stopwatch data are the primary display artifacts; timing stats should visually compete with the main headline.
+- The central setup/play panel remains an active reaction arena, using crosshair geometry, round state, and timing-grid language before it reads as a generic form.
+- Lime remains reserved for active states, primary actions, the current team, and the brand mark.

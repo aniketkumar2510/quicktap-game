@@ -42,6 +42,8 @@ export default function Home() {
   const [gameState, setGameState] = useState<GameState>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
   const [round, setRound] = useState(1);
+  const [playerName, setPlayerName] = useState("Alex");
+  const [totalRounds, setTotalRounds] = useState(5);
   const [sessions, setSessions] = useState(initialSessions);
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
@@ -88,6 +90,10 @@ export default function Home() {
   };
 
   const startNext = () => {
+    if (round >= totalRounds) {
+      reset();
+      return;
+    }
     setRound((value) => value + 1);
     armRound();
   };
@@ -100,7 +106,7 @@ export default function Home() {
   };
 
   const stateCopy = {
-    idle: { kicker: "READY WHEN YOU ARE", title: "Test your reflexes.", sub: "The target appears after a random delay. Tap it as fast as you can.", button: "Arm the round" },
+    idle: { kicker: "SET YOUR SESSION", title: "Choose your line-up.", sub: "Enter a nickname and choose how many rounds your team will play.", button: "Arm the round" },
     armed: { kicker: "WAIT FOR THE SIGNAL", title: "Stay sharp.", sub: "No tap yet. The green signal can land at any moment.", button: "Listening…" },
     live: { kicker: "TAP NOW", title: "GO.", sub: "Your reaction clock is running.", button: "Tap the signal" },
     result: { kicker: "ROUND COMPLETE", title: `${reactionTime ?? 0} ms`, sub: reactionTime && reactionTime < 220 ? "That was quick. Keep the momentum." : "Solid run. One more can be faster.", button: "Next round" },
@@ -127,7 +133,7 @@ export default function Home() {
         <div className="rail-bottom">
           <div className="room-label"><span className="status-dot" /> LIVE ROOM</div>
           <div className="room-code-row"><span>QT-4821</span><button aria-label="Copy room code" onClick={copyCode}><Copy size={14} /></button></div>
-          <div className="room-note">8 players connected<br />Round {round} of 5</div>
+          <div className="room-note">8 players connected<br />{playerName} · Round {round} of {totalRounds}</div>
         </div>
       </aside>
 
@@ -140,7 +146,7 @@ export default function Home() {
 
         <div className="stage-content">
           <div className="stage-heading">
-            <div><div className="eyebrow"><span className="lime-dash" /> ROUND {String(round).padStart(2, "0")} / 05</div><h1>Make your move<br /><em>count.</em></h1></div>
+            <div><div className="eyebrow"><span className="lime-dash" /> ROUND {String(round).padStart(2, "0")} / {String(totalRounds).padStart(2, "0")}</div><h1>Make your move<br /><em>count.</em></h1></div>
             <div className="stage-heading-right"><div className="mini-stat"><span>YOUR BEST</span><strong>183 <small>ms</small></strong></div><div className="mini-stat"><span>TEAM RANK</span><strong>#01 <small>of 04</small></strong></div></div>
           </div>
 
@@ -149,13 +155,13 @@ export default function Home() {
             <div className="arena-corner corner-tl">WAIT TIME<br /><span>1.35 — 3.55 SEC</span></div>
             <div className="arena-corner corner-tr">INPUT<br /><span>POINTER / SPACE</span></div>
             <div className="arena-center">
-              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged to team board</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
+              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
             </div>
-            <div className="arena-corner corner-bl">SESSION<br /><span>TEAM / 05 ROUNDS</span></div>
+            <div className="arena-corner corner-bl">SESSION<br /><span>TEAM / {String(totalRounds).padStart(2, "0")} ROUNDS</span></div>
             <div className="arena-corner corner-br"><Keyboard size={13} /> SPACEBAR ENABLED</div>
           </div>
 
-          <div className="stage-controls"><button className={`primary-button ${gameState === "armed" ? "loading" : ""}`} onClick={(event) => { event.stopPropagation(); gameState === "result" || gameState === "false-start" ? startNext() : gameState === "idle" ? armRound() : undefined; }} disabled={gameState === "armed" || gameState === "live"}><span className="button-icon">{gameState === "idle" ? <Play size={15} fill="currentColor" /> : gameState === "result" || gameState === "false-start" ? <RotateCcw size={15} /> : <Radio size={15} />}</span>{stateCopy.button}<ArrowRight size={15} /></button><div className="control-hint"><span className="keycap">SPACE</span> to tap <span className="dot-separator">·</span> <button onClick={() => toast.info("The target appears once per round after a random 1.35–3.55 second delay.")}>How it works <ChevronDown size={13} /></button></div></div>
+          <div className="stage-controls"><button className={`primary-button ${gameState === "armed" ? "loading" : ""}`} onClick={(event) => { event.stopPropagation(); gameState === "result" || gameState === "false-start" ? startNext() : gameState === "idle" ? armRound() : undefined; }} disabled={gameState === "armed" || gameState === "live"}><span className="button-icon">{gameState === "idle" ? <Play size={15} fill="currentColor" /> : gameState === "result" || gameState === "false-start" ? <RotateCcw size={15} /> : <Radio size={15} />}</span>{gameState === "result" && round >= totalRounds ? "Finish session" : stateCopy.button}<ArrowRight size={15} /></button><div className="control-hint"><span className="keycap">SPACE</span> to tap <span className="dot-separator">·</span> <button onClick={() => toast.info("The target appears once per round after a random 1.35–3.55 second delay.")}>How it works <ChevronDown size={13} /></button></div></div>
         </div>
       </section>
 
