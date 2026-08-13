@@ -160,3 +160,6 @@
 - [x] Add explicit database load/save error handling and visible sync status with retry behavior.
 - [x] Validate the persistence contract with structured state data instead of opaque JSON.
 - [x] Validate browser-level save and rehydration behavior after refresh.
+- [x] Use a shared QuickTap database workspace key across devices instead of browser-specific owner keys.
+- [x] Add an existing-player nickname dropdown while preserving free-text new-player entry.
+- [x] Validate published/mobile data rehydration and new-player creation behavior.
