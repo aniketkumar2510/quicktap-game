@@ -334,7 +334,7 @@ The current game implementation keeps the primary page logic in one feature page
 
 The server uses the managed full-stack runtime and should not be modified to assume a fixed production port. Production deployment should use the project’s managed hosting configuration or another environment that supplies the required server variables and database connection.
 
-## Test It Out!:
+## Test It Out! :
 
 https://quicktapgame-dsreyier.manus.space/
 
