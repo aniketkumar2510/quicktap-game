@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add a confirmation-protected Clear Session History action.
+- [x] Delete active-session history from persisted storage and refresh chart state.
+- [x] Validate deletion and the empty history state.
+
 - [x] Replace duplicate history render keys with stable unique keys.
 - [x] Validate the page console no longer reports duplicate-key warnings.
 
