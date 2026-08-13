@@ -99,3 +99,15 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="dark"] .setup-fields select option, [data-theme="dark"] .history-player-picker select option, [data-theme="dark"] .h2h-pickers select option { background-color: #151815; color: #ffffff; }
 [data-theme="light"] .setup-fields select, [data-theme="light"] .history-player-picker select, [data-theme="light"] .h2h-pickers select { background-color: #ffffff; color: #101410; border-color: rgba(8,9,8,.42); }
 [data-theme="light"] .setup-fields select option, [data-theme="light"] .history-player-picker select option, [data-theme="light"] .h2h-pickers select option { background-color: #ffffff; color: #101410; }
+
+/* Taken nickname feedback must remain readable against the setup grid in every theme. */
+.nickname-warning { background: #151815; border-color: var(--warning); color: #ffffff; }
+.nickname-warning strong { color: var(--warning); }
+.nickname-warning > span { color: #ffffff; }
+.nickname-suggestions button { background: transparent; color: var(--accent); border-color: var(--accent); font-weight: 700; }
+.nickname-suggestions button:hover, .nickname-suggestions button:focus-visible { background: var(--accent); color: #101410; }
+[data-theme="light"] .nickname-warning { background: #ffffff; border-color: #b423c9; color: #101410; }
+[data-theme="light"] .nickname-warning strong { color: #8f179f; }
+[data-theme="light"] .nickname-warning > span { color: #101410; }
+[data-theme="light"] .nickname-suggestions button { background: #ffffff; color: #8f179f; border-color: #8f179f; }
+[data-theme="light"] .nickname-suggestions button:hover, [data-theme="light"] .nickname-suggestions button:focus-visible { background: #d946ef; color: #101410; }

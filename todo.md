@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Fix taken-nickname warning text visibility in both themes.
+- [x] Fix available-nickname suggestion button visibility in both themes.
+- [x] Validate the nickname warning state from the provided screenshot scenario.
 - [x] Make nickname and player-name option lists readable in dark mode.
 - [x] Make nickname and player-name option lists readable in light mode.
 - [x] Validate option list visibility across themes.
