@@ -151,3 +151,7 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .h2h-chart .h2h-average-b { stroke: #26332b; stroke-width: 1.8; stroke-dasharray: 4 4; }
 [data-theme="light"] .h2h-chart .h2h-label-a { fill: #8f179f; }
 [data-theme="light"] .h2h-chart .h2h-label-b { fill: #26332b; }
+
+.chart-point { cursor: crosshair; }
+.chart-point circle { transition: r .16s var(--ease-out), stroke-width .16s var(--ease-out), filter .16s var(--ease-out); }
+.chart-point:hover circle { r: 6; stroke-width: 3; filter: drop-shadow(0 0 5px rgba(var(--accent-rgb), .55)); }

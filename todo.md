@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add exact-value and date hover tooltips to Session history chart points.
+- [x] Add exact-value and date hover tooltips to H2H chart points.
+- [x] Validate chart tooltip behavior in both themes.
 - [x] Make Session history chart lines and reference lines visible in light mode.
 - [x] Make H2H chart lines, grid lines, and labels visible in light mode.
 - [x] Validate both chart views in light mode.
