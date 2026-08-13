@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Restore all logged entries in the active-session history dialog.
+- [x] Keep the current-player trend chart and Clear Session History behavior intact.
+- [x] Validate full history rendering and clear-history behavior.
+
 - [x] Add a confirmation-protected Clear Session History action.
 - [x] Delete active-session history from persisted storage and refresh chart state.
 - [x] Validate deletion and the empty history state.
