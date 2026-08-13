@@ -22,7 +22,7 @@ The project is designed around a focused **Signal / Silence** visual language: a
 - [Design system](#design-system)
 - [Data model](#data-model)
 - [Known implementation notes](#known-implementation-notes)
-- [Future improvements](#future-improvements)
+- [Test It Out!](#Test-It-Out!)
 - [License](#license)
 - [References](#references)
 
