@@ -167,3 +167,11 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
   [data-theme="light"] .left-rail.mobile-nav-open .rail-link:not(.play-link) { color: #101410; background: #ffffff; }
   [data-theme="light"] .left-rail.mobile-nav-open .rail-link:not(.play-link):hover { background: #f2f4ef; }
 }
+
+.persistence-status { border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 9px; letter-spacing: .14em; padding: 7px 8px; cursor: pointer; transition: color .2s ease, border-color .2s ease, background-color .2s ease; }
+.persistence-status:hover, .persistence-status:focus-visible { color: var(--lime); border-color: var(--lime); outline: none; }
+.persistence-status.is-offline { color: #ff5d5d; border-color: #ff5d5d; }
+@media (max-width: 720px) { .persistence-status { display: none; } }
+[data-theme="light"] .persistence-status { color: #4c5750; border-color: rgba(8,9,8,.22); }
+[data-theme="light"] .persistence-status:hover, [data-theme="light"] .persistence-status:focus-visible { color: #8f179f; border-color: #8f179f; }
+[data-theme="light"] .persistence-status.is-offline { color: #b42323; border-color: #b42323; }

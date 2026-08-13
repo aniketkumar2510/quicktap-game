@@ -1,5 +1,6 @@
 /* QuickTap style: Signal / Silence — matte black stage, white instrument text, Signal Lime only for action states. */
 import { useEffect, useRef, useState } from "react";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
   Activity,
@@ -51,10 +52,25 @@ function readStored<T>(key: string, fallback: T): T {
 }
 
 const initialSessions: Session[] = [];
+const OWNER_KEY_STORAGE = "quicktap.db-owner.v1";
+
+function getOwnerKey() {
+  if (typeof window === "undefined") return "server-render-owner-key";
+  const existing = window.localStorage.getItem(OWNER_KEY_STORAGE);
+  if (existing) return existing;
+  const created = `qt-${crypto.randomUUID()}`;
+  window.localStorage.setItem(OWNER_KEY_STORAGE, created);
+  return created;
+}
 
 const sessionOrder = (session: Session) => Number(session.sessionId.replace("session-", "")) || 0;
 
 export default function Home() {
+  const [ownerKey] = useState(getOwnerKey);
+  const persistedStateQuery = trpc.quicktap.getState.useQuery({ ownerKey }, { staleTime: Infinity, retry: 1 });
+  const savePersistedState = trpc.quicktap.saveState.useMutation();
+  const databaseHydrated = useRef(false);
+  const persistenceStatus = persistedStateQuery.isLoading ? "SYNCING…" : persistedStateQuery.isError || savePersistedState.isError ? "LOCAL COPY" : savePersistedState.isPending ? "SAVING…" : "DB SYNCED";
   const [gameState, setGameState] = useState<GameState>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
   const [round, setRound] = useState(1);
@@ -140,6 +156,31 @@ export default function Home() {
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(sessions));
   }, [sessions]);
+
+  useEffect(() => {
+    if (!persistedStateQuery.isSuccess) return;
+    if (persistedStateQuery.data?.state) {
+      try {
+        const persisted = persistedStateQuery.data.state;
+        if (Array.isArray(persisted.sessions)) setSessions(persisted.sessions);
+        if (persisted.playerScores && typeof persisted.playerScores === "object") setPlayerScores(persisted.playerScores);
+        if (typeof persisted.playerName === "string") {
+          setPlayerName(persisted.playerName);
+          setSessionNickname(persisted.playerName);
+        }
+        if (typeof persisted.totalRounds === "number") setTotalRounds(persisted.totalRounds);
+        if (typeof persisted.activeSessionId === "string") setActiveSessionId(persisted.activeSessionId);
+      } catch {
+        toast.error("Saved game data could not be read", { description: "QuickTap will continue with the local copy." });
+      }
+    }
+    databaseHydrated.current = true;
+  }, [persistedStateQuery.data, persistedStateQuery.isSuccess]);
+
+  useEffect(() => {
+    if (!databaseHydrated.current) return;
+    savePersistedState.mutate({ ownerKey, state: { sessions, playerScores, playerName, totalRounds, activeSessionId } });
+  }, [sessions, playerScores, playerName, totalRounds, activeSessionId]);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.activeSession, JSON.stringify(activeSessionId));
@@ -360,6 +401,14 @@ export default function Home() {
     summary: { kicker: "SESSION COMPLETE", title: "You made your mark.", sub: "Your rounds are logged below. Ready for another run?", button: "New session" },
   }[gameState];
 
+  const retryPersistence = () => {
+    if (persistedStateQuery.isError) {
+      void persistedStateQuery.refetch();
+      return;
+    }
+    savePersistedState.mutate({ ownerKey, state: { sessions, playerScores, playerName, totalRounds, activeSessionId } });
+  };
+
   const copyCode = () => {
     navigator.clipboard?.writeText("QT-4821");
     toast.success("Session code copied", { description: "Share it with your team." });
@@ -384,7 +433,7 @@ export default function Home() {
         <header className="topbar">
           <button className="mobile-menu" type="button" onClick={() => setShowMobileNav((value) => !value)} aria-expanded={showMobileNav} aria-controls="mobile-primary-nav" aria-label={showMobileNav ? "Close navigation menu" : "Open navigation menu"}>{showMobileNav ? <X size={20} /> : <Menu size={20} />}</button>
           <div className="breadcrumb"><span>MEETING ROOM</span><ArrowRight size={13} /><strong>QUICKTAP</strong></div>
-          <div className="topbar-actions"><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
+          <div className="topbar-actions"><button className={`persistence-status ${persistenceStatus === "LOCAL COPY" ? "is-offline" : ""}`} type="button" onClick={() => { if (persistenceStatus === "LOCAL COPY") retryPersistence(); }} title={persistenceStatus === "LOCAL COPY" ? "Retry database sync" : "QuickTap data persistence status"}>{persistenceStatus}</button><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === "light"} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
         </header>
 
         <div className="stage-content">

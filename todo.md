@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Upgrade QuickTap to a database-backed full-stack project.
+- [x] Persist player scores and session history through typed server procedures.
+- [x] Migrate the UI from local-only persistence with a safe fallback.
+- [x] Validate database persistence and production readiness.
 - [x] Add a mobile menu control for the left navigation.
 - [x] Make mobile navigation items selectable and dismissible.
 - [x] Validate mobile navigation at narrow viewport sizes.
@@ -153,3 +157,6 @@
 
 - [x] Reproduce and diagnose the missing signal transition.
 - [x] Fix and validate reliable Signal Lime timing.
+- [x] Add explicit database load/save error handling and visible sync status with retry behavior.
+- [x] Validate the persistence contract with structured state data instead of opaque JSON.
+- [x] Validate browser-level save and rehydration behavior after refresh.
