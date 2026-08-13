@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Move H2H average values into a bottom legend.
+- [x] Add best, worst, and average summary metrics for both players.
+- [x] Validate the H2H table and legend with two saved players.
+
 - [x] Rename Invite team navigation and section to H2H.
 - [x] Add two saved-player selectors for head-to-head comparison.
 - [x] Overlay both players’ reaction trends and averages on one chart.
