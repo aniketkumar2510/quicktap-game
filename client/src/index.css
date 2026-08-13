@@ -90,3 +90,12 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .h2h-summary-row { border-color: rgba(8,9,8,.12); }
 [data-theme="light"] .h2h-summary-row strong { color: #101410; }
 [data-theme="light"] .h2h-summary-header { color: #4f5b51; }
+
+/* High-contrast nickname/player selectors: keep the closed control and native option list readable in both themes. */
+.setup-fields select, .history-player-picker select, .h2h-pickers select { appearance: auto; -webkit-appearance: menulist; forced-color-adjust: none; font-weight: 600; text-shadow: none; }
+.setup-fields select:focus-visible, .history-player-picker select:focus-visible, .h2h-pickers select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.setup-fields select option, .history-player-picker select option, .h2h-pickers select option { font-weight: 600; }
+[data-theme="dark"] .setup-fields select, [data-theme="dark"] .history-player-picker select, [data-theme="dark"] .h2h-pickers select { background-color: #151815; color: #ffffff; border-color: rgba(255,255,255,.42); }
+[data-theme="dark"] .setup-fields select option, [data-theme="dark"] .history-player-picker select option, [data-theme="dark"] .h2h-pickers select option { background-color: #151815; color: #ffffff; }
+[data-theme="light"] .setup-fields select, [data-theme="light"] .history-player-picker select, [data-theme="light"] .h2h-pickers select { background-color: #ffffff; color: #101410; border-color: rgba(8,9,8,.42); }
+[data-theme="light"] .setup-fields select option, [data-theme="light"] .history-player-picker select option, [data-theme="light"] .h2h-pickers select option { background-color: #ffffff; color: #101410; }
