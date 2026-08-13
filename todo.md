@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Replace duplicate history render keys with stable unique keys.
+- [x] Validate the page console no longer reports duplicate-key warnings.
+
 - [x] Order active-session history entries from Round 1 onward.
 - [x] Add a dashed average reaction-time line to the trend chart.
 - [x] Validate chart and list share the same round order.
