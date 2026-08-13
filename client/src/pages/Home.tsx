@@ -101,6 +101,11 @@ export default function Home() {
     playTone(780, 0.18, "sine", 0.11, 0.05);
   };
 
+  const playError = () => {
+    playTone(180, 0.16, "sawtooth", 0, 0.055);
+    playTone(120, 0.2, "square", 0.09, 0.04);
+  };
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.code !== "Space" || event.repeat) return;
@@ -153,6 +158,7 @@ export default function Home() {
   const handleArenaClick = () => {
     if (gameState === "armed") {
       window.clearTimeout(timerRef.current);
+      playError();
       setGameState("false-start");
       toast.error("False start", { description: "Wait for the green signal." });
       return;

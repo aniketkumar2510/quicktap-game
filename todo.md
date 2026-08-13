@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add an arena shake animation for early taps.
+- [x] Add a muted-by-toggle error sound for false starts.
+- [x] Validate the early-tap feedback state in the browser.
+
 - [x] Add waiting warning, signal, and success reaction sound cues.
 - [x] Add a persistent mute/unmute control with accessible labels.
 - [x] Validate sound triggers across the main game states.
