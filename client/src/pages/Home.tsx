@@ -58,6 +58,9 @@ export default function Home() {
   const [reactionTime, setReactionTime] = useState<number | null>(null);
   const [round, setRound] = useState(1);
   const [playerName, setPlayerName] = useState(() => readStored(STORAGE_KEYS.playerName, "Alex"));
+  const [sessionNickname, setSessionNickname] = useState(() => readStored(STORAGE_KEYS.playerName, "Alex"));
+  const [nicknameError, setNicknameError] = useState("");
+  const [nicknameSuggestions, setNicknameSuggestions] = useState<string[]>([]);
   const [totalRounds, setTotalRounds] = useState(() => readStored(STORAGE_KEYS.totalRounds, 5));
   const [activeSessionId, setActiveSessionId] = useState(() => readStored(STORAGE_KEYS.activeSession, `session-${Date.now()}`));
   const [sessions, setSessions] = useState<Session[]>(() => readStored<Session[]>(STORAGE_KEYS.sessions, initialSessions).filter((session) => session.winner !== "Green Team" && session.winner !== "Night Shift" && session.winner !== "Product Crew").map((session) => ({ ...session, sessionId: session.sessionId ?? activeSessionId })));
@@ -159,7 +162,29 @@ export default function Home() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
+  const getNicknameSuggestions = (seed: string) => {
+    const base = seed.trim().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, " ").slice(0, 14) || "Player";
+    const taken = new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].map((name) => name.trim().toLowerCase()));
+    return [`${base}2`, `${base}01`, `${base}Prime`, `${base}Pro`, `${base}Team`].filter((name, index, list) => !taken.has(name.toLowerCase()) && list.indexOf(name) === index).slice(0, 3);
+  };
+
   const armRound = () => {
+    const normalizedName = playerName.trim();
+    const taken = new Set([...Object.keys(playerScores), ...sessions.map((session) => session.winner)].map((name) => name.trim().toLowerCase()));
+    const isChangingNickname = normalizedName.toLowerCase() !== sessionNickname.trim().toLowerCase();
+    if (!normalizedName) {
+      setNicknameError("Enter a nickname before starting.");
+      setNicknameSuggestions([]);
+      return;
+    }
+    if (isChangingNickname && taken.has(normalizedName.toLowerCase())) {
+      setNicknameError(`“${normalizedName}” is already taken.`);
+      setNicknameSuggestions(getNicknameSuggestions(normalizedName));
+      return;
+    }
+    setSessionNickname(normalizedName);
+    setNicknameError("");
+    setNicknameSuggestions([]);
     window.clearTimeout(timerRef.current);
     playWarning();
     setReactionTime(null);
@@ -352,7 +377,7 @@ export default function Home() {
             <div className="arena-corner corner-tl">WAIT TIME<br /><span>1.35 — 3.55 SEC</span></div>
             <div className="arena-corner corner-tr">INPUT<br /><span>POINTER / SPACE</span></div>
             <div className="arena-center">
-              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP NOW</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "summary" ? <div className="summary-readout"><div className="result-label">FINAL LEADERBOARD</div><div className="summary-title">{playerName || "Unnamed player"}</div><div className="summary-metrics"><div><span>BEST</span><strong>{bestTime ?? "—"}<small>ms</small></strong></div><div><span>AVG</span><strong>{sessionAverage ?? "—"}<small>ms</small></strong></div></div><div className="summary-list">{playerLeaderboard.length ? playerLeaderboard.map((player) => <div className={`summary-row ${player.name === activePlayerName ? "highlight" : ""}`} key={player.name}><span>{String(player.rank).padStart(2, "0")}</span><strong>{player.name}</strong><b>{player.score}<small>ms</small></b></div>) : <div className="summary-row highlight"><span>01</span><strong>{activePlayerName}</strong><b>—<small>ms</small></b></div>}</div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
+              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP NOW</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "summary" ? <div className="summary-readout"><div className="result-label">FINAL LEADERBOARD</div><div className="summary-title">{playerName || "Unnamed player"}</div><div className="summary-metrics"><div><span>BEST</span><strong>{bestTime ?? "—"}<small>ms</small></strong></div><div><span>AVG</span><strong>{sessionAverage ?? "—"}<small>ms</small></strong></div></div><div className="summary-list">{playerLeaderboard.length ? playerLeaderboard.map((player) => <div className={`summary-row ${player.name === activePlayerName ? "highlight" : ""}`} key={player.name}><span>{String(player.rank).padStart(2, "0")}</span><strong>{player.name}</strong><b>{player.score}<small>ms</small></b></div>) : <div className="summary-row highlight"><span>01</span><strong>{activePlayerName}</strong><b>—<small>ms</small></b></div>}</div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} aria-invalid={Boolean(nicknameError)} onChange={(event) => { setPlayerName(event.target.value); setNicknameError(""); setNicknameSuggestions([]); }} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div>{nicknameError && <div className="nickname-warning" role="alert"><strong>{nicknameError}</strong><span>Try one of these available options:</span><div className="nickname-suggestions">{nicknameSuggestions.map((suggestion) => <button type="button" key={suggestion} onClick={() => { setPlayerName(suggestion); setNicknameError(""); setNicknameSuggestions([]); }}>{suggestion}</button>)}</div></div>}<div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
             </div>
             <div className="arena-corner corner-bl">SESSION<br /><span>TEAM / {String(totalRounds).padStart(2, "0")} ROUNDS</span></div>
             <div className="arena-corner corner-br"><Keyboard size={13} /> SPACEBAR ENABLED</div>

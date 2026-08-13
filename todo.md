@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Prevent starting a session with an already-used nickname.
+- [x] Show a taken-nickname message with contextual available suggestions.
+- [x] Validate duplicate-name blocking and suggestion selection.
 - [x] Add a smooth dark/light mode transition.
 - [x] Rename TEAM LEADERBOARD to LEADERBOARD.
 - [x] Rename Room momentum to TOP SCORES.
