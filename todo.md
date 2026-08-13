@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Aggregate best saved times for every nickname across sessions.
+- [x] Render all ranked players in the live and final leaderboards.
+- [x] Validate AK and Lewis appear together with their best times.
+
 - [x] Repair Session history access and view state.
 - [x] Add a reliable empty history state after reset.
 - [x] Validate history navigation in the browser.
