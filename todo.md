@@ -6,5 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Log each completed round under the entered nickname.
+- [x] Update YOUR BEST and TEAM RANK from live session performance.
+- [x] Add a final leaderboard summary at session completion.
+
 - [x] Reproduce and diagnose the missing signal transition.
 - [x] Fix and validate reliable Signal Lime timing.

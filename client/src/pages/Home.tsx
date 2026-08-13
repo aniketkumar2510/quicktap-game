@@ -21,7 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 
-type GameState = "idle" | "armed" | "live" | "result" | "false-start";
+type GameState = "idle" | "armed" | "live" | "result" | "false-start" | "summary";
 
 type Session = { date: string; players: number; best: number; winner: string };
 
@@ -45,6 +45,7 @@ export default function Home() {
   const [playerName, setPlayerName] = useState("Alex");
   const [totalRounds, setTotalRounds] = useState(5);
   const [sessions, setSessions] = useState(initialSessions);
+  const [roundTimes, setRoundTimes] = useState<number[]>([]);
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
   const signalAt = useRef(0);
@@ -83,14 +84,15 @@ export default function Home() {
     if (gameState !== "live") return;
     const result = Math.max(1, Math.round(performance.now() - signalAt.current));
     setReactionTime(result);
+    setRoundTimes((current) => [...current, result]);
     setGameState("result");
-    const nextSession: Session = { date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: "You / Green Team" };
-    setSessions((current) => [nextSession, ...current].slice(0, 4));
+    const nextSession: Session = { date: "Just now", players: isLiveMode ? 8 : 1, best: result, winner: playerName.trim() || "Unnamed player" };
+    setSessions((current) => [nextSession, ...current].slice(0, 6));
   };
 
   const startNext = () => {
     if (round >= totalRounds) {
-      reset();
+      setGameState("summary");
       return;
     }
     setRound((value) => value + 1);
@@ -102,7 +104,12 @@ export default function Home() {
     setReactionTime(null);
     setGameState("idle");
     setRound(1);
+    setRoundTimes([]);
   };
+
+  const bestTime = roundTimes.length ? Math.min(...roundTimes) : null;
+  const teamRank = bestTime ? Math.min(4, 1 + [198, 214, 228, 251].filter((average) => average < bestTime).length) : null;
+  const sessionAverage = roundTimes.length ? Math.round(roundTimes.reduce((sum, time) => sum + time, 0) / roundTimes.length) : null;
 
   const stateCopy = {
     idle: { kicker: "SET YOUR SESSION", title: "Choose your line-up.", sub: "Enter a nickname and choose how many rounds your team will play.", button: "Arm the round" },
@@ -110,6 +117,7 @@ export default function Home() {
     live: { kicker: "TAP NOW", title: "GO.", sub: "Your reaction clock is running.", button: "Tap the signal" },
     result: { kicker: "ROUND COMPLETE", title: `${reactionTime ?? 0} ms`, sub: reactionTime && reactionTime < 220 ? "That was quick. Keep the momentum." : "Solid run. One more can be faster.", button: "Next round" },
     "false-start": { kicker: "FALSE START", title: "Too early.", sub: "Wait for Signal Lime. Anticipation is part of the game.", button: "Try again" },
+    summary: { kicker: "SESSION COMPLETE", title: "You made your mark.", sub: "Your rounds are logged below. Ready for another run?", button: "New session" },
   }[gameState];
 
   const copyCode = () => {
@@ -146,7 +154,7 @@ export default function Home() {
         <div className="stage-content">
           <div className="stage-heading">
             <div><div className="eyebrow"><span className="lime-dash" /> ROUND {String(round).padStart(2, "0")} / {String(totalRounds).padStart(2, "0")}</div><h1>Make your move<br /><em>count.</em></h1></div>
-            <div className="stage-heading-right"><div className="mini-stat"><span>YOUR BEST</span><strong>183 <small>ms</small></strong></div><div className="mini-stat"><span>TEAM RANK</span><strong>#01 <small>of 04</small></strong></div></div>
+            <div className="stage-heading-right"><div className="mini-stat"><span>YOUR BEST</span><strong>{bestTime ?? "—"} <small>{bestTime ? "ms" : "waiting"}</small></strong></div><div className="mini-stat"><span>TEAM RANK</span><strong>#{teamRank ?? "—"} <small>of 04</small></strong></div></div>
           </div>
 
           <div className={`reaction-arena state-${gameState}`} onClick={handleArenaClick} role="button" tabIndex={0} onKeyDown={(event) => event.key === "Enter" && handleArenaClick()} aria-label="Reaction game arena">
@@ -154,13 +162,13 @@ export default function Home() {
             <div className="arena-corner corner-tl">WAIT TIME<br /><span>1.35 — 3.55 SEC</span></div>
             <div className="arena-corner corner-tr">INPUT<br /><span>POINTER / SPACE</span></div>
             <div className="arena-center">
-              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
+              {gameState === "live" ? <div className="tap-target"><div className="target-cross"><span /></div><div className="target-label">TAP</div></div> : gameState === "result" ? <div className="result-readout"><div className="result-label">REACTION TIME</div><div className="result-number">{reactionTime}<small>ms</small></div><div className="result-badge"><Check size={13} /> Logged for {playerName}</div></div> : gameState === "summary" ? <div className="summary-readout"><div className="result-label">FINAL LEADERBOARD</div><div className="summary-title">{playerName || "Unnamed player"}</div><div className="summary-metrics"><div><span>BEST</span><strong>{bestTime ?? "—"}<small>ms</small></strong></div><div><span>AVG</span><strong>{sessionAverage ?? "—"}<small>ms</small></strong></div><div><span>RANK</span><strong>#{teamRank ?? "—"}</strong></div></div><div className="summary-list"><div className="summary-row highlight"><span>01</span><strong>{playerName || "Unnamed player"}</strong><b>{bestTime ?? "—"}<small>ms</small></b></div><div className="summary-row"><span>02</span><strong>Green Team</strong><b>198<small>ms</small></b></div><div className="summary-row"><span>03</span><strong>Night Shift</strong><b>214<small>ms</small></b></div></div></div> : gameState === "idle" ? <div className="setup-panel" onClick={(event) => event.stopPropagation()}><div className="wait-icon"><Users size={25} /></div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="setup-fields"><label><span>PLAYER NICKNAME</span><input value={playerName} maxLength={18} onChange={(event) => setPlayerName(event.target.value)} placeholder="Your nickname" /></label><label><span>ROUNDS</span><select value={totalRounds} onChange={(event) => setTotalRounds(Number(event.target.value))}><option value={3}>03 rounds</option><option value={5}>05 rounds</option><option value={7}>07 rounds</option><option value={10}>10 rounds</option></select></label></div><div className="wait-sub">{stateCopy.sub}</div></div> : <div className="wait-readout"><div className="wait-icon">{gameState === "false-start" ? <RotateCcw size={26} /> : <Activity size={26} />}</div><div className="wait-kicker">{stateCopy.kicker}</div><div className="wait-title">{stateCopy.title}</div><div className="wait-sub">{stateCopy.sub}</div></div>}
             </div>
             <div className="arena-corner corner-bl">SESSION<br /><span>TEAM / {String(totalRounds).padStart(2, "0")} ROUNDS</span></div>
             <div className="arena-corner corner-br"><Keyboard size={13} /> SPACEBAR ENABLED</div>
           </div>
 
-          <div className="stage-controls"><button className={`primary-button ${gameState === "armed" ? "loading" : ""}`} onClick={(event) => { event.stopPropagation(); gameState === "result" || gameState === "false-start" ? startNext() : gameState === "idle" ? armRound() : undefined; }} disabled={gameState === "armed" || gameState === "live"}><span className="button-icon">{gameState === "idle" ? <Play size={15} fill="currentColor" /> : gameState === "result" || gameState === "false-start" ? <RotateCcw size={15} /> : <Radio size={15} />}</span>{gameState === "result" && round >= totalRounds ? "Finish session" : stateCopy.button}<ArrowRight size={15} /></button><div className="control-hint"><span className="keycap">SPACE</span> to tap <span className="dot-separator">·</span> <button onClick={() => toast.info("The target appears once per round after a random 1.35–3.55 second delay.")}>How it works <ChevronDown size={13} /></button></div></div>
+          <div className="stage-controls"><button className={`primary-button ${gameState === "armed" ? "loading" : ""}`} onClick={(event) => { event.stopPropagation(); gameState === "result" || gameState === "false-start" ? startNext() : gameState === "summary" ? reset() : gameState === "idle" ? armRound() : undefined; }} disabled={gameState === "armed" || gameState === "live"}><span className="button-icon">{gameState === "idle" ? <Play size={15} fill="currentColor" /> : gameState === "result" || gameState === "false-start" ? <RotateCcw size={15} /> : gameState === "summary" ? <RotateCcw size={15} /> : <Radio size={15} />}</span>{stateCopy.button}<ArrowRight size={15} /></button><div className="control-hint"><span className="keycap">SPACE</span> to tap <span className="dot-separator">·</span> <button onClick={() => toast.info("The target appears once per round after a random 1.35–3.55 second delay.")}>How it works <ChevronDown size={13} /></button></div></div>
         </div>
       </section>
 
