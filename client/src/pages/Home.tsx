@@ -32,6 +32,7 @@ const STORAGE_KEYS = {
   playerName: "quicktap.player-name.v1",
   totalRounds: "quicktap.total-rounds.v1",
   activeSession: "quicktap.active-session.v1",
+  soundEnabled: "quicktap.sound-enabled.v1",
 };
 
 function readStored<T>(key: string, fallback: T): T {
@@ -58,8 +59,47 @@ export default function Home() {
   const [roundTimes, setRoundTimes] = useState<number[]>([]);
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => readStored(STORAGE_KEYS.soundEnabled, true));
   const signalAt = useRef(0);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<number | undefined>(undefined);
+
+  const getAudioContext = () => {
+    if (!soundEnabled || typeof window === "undefined") return null;
+    const AudioContextClass = window.AudioContext;
+    if (!AudioContextClass) return null;
+    if (!audioContextRef.current) audioContextRef.current = new AudioContextClass();
+    if (audioContextRef.current.state === "suspended") void audioContextRef.current.resume();
+    return audioContextRef.current;
+  };
+
+  const playTone = (frequency: number, duration: number, type: OscillatorType = "sine", delay = 0, volume = 0.045) => {
+    const context = getAudioContext();
+    if (!context) return;
+    const start = context.currentTime + delay;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.02);
+  };
+
+  const playWarning = () => {
+    playTone(740, 0.09, "square", 0, 0.028);
+    playTone(740, 0.09, "square", 0.2, 0.028);
+  };
+
+  const playSignal = () => playTone(1680, 0.14, "triangle", 0, 0.07);
+  const playSuccess = () => {
+    playTone(520, 0.12, "sine", 0, 0.05);
+    playTone(780, 0.18, "sine", 0.11, 0.05);
+  };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -94,12 +134,18 @@ export default function Home() {
     window.localStorage.setItem(STORAGE_KEYS.totalRounds, JSON.stringify(totalRounds));
   }, [totalRounds]);
 
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEYS.soundEnabled, JSON.stringify(soundEnabled));
+  }, [soundEnabled]);
+
   const armRound = () => {
     window.clearTimeout(timerRef.current);
+    playWarning();
     setReactionTime(null);
     setGameState("armed");
     timerRef.current = window.setTimeout(() => {
       signalAt.current = performance.now();
+      playSignal();
       setGameState("live");
     }, 1350 + Math.floor(Math.random() * 2200));
   };
@@ -113,6 +159,7 @@ export default function Home() {
     }
     if (gameState !== "live") return;
     const result = Math.max(1, Math.round(performance.now() - signalAt.current));
+    playSuccess();
     setReactionTime(result);
     setRoundTimes((current) => [...current, result]);
     setGameState("result");
@@ -209,7 +256,7 @@ export default function Home() {
         <header className="topbar">
           <div className="mobile-menu"><Menu size={20} /></div>
           <div className="breadcrumb"><span>MEETING ROOM</span><ArrowRight size={13} /><strong>QUICKTAP</strong></div>
-          <div className="topbar-actions"><div className="live-pill"><span className="status-dot" /> Live multiplayer</div><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
+          <div className="topbar-actions"><div className="live-pill"><span className="status-dot" /> Live multiplayer</div><button className="sound-toggle" onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled} aria-label={soundEnabled ? "Mute game sounds" : "Unmute game sounds"}>{soundEnabled ? "SOUND ON" : "SOUND OFF"}</button><button className="icon-button" onClick={reset} aria-label="Reset session"><RotateCcw size={16} /></button></div>
         </header>
 
         <div className="stage-content">

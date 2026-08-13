@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Add waiting warning, signal, and success reaction sound cues.
+- [x] Add a persistent mute/unmute control with accessible labels.
+- [x] Validate sound triggers across the main game states.
+
 - [x] Aggregate best saved times for every nickname across sessions.
 - [x] Render all ranked players in the live and final leaderboards.
 - [x] Validate AK and Lewis appear together with their best times.
