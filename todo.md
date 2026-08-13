@@ -6,6 +6,9 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Improve option and select visibility in both themes.
+- [x] Strengthen light-mode H2H selector, chart, legend, and metric contrast.
+- [x] Validate controls and H2H readability in both themes.
 - [x] Prevent starting a session with an already-used nickname.
 - [x] Show a taken-nickname message with contextual available suggestions.
 - [x] Validate duplicate-name blocking and suggestion selection.

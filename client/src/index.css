@@ -72,3 +72,21 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 .nickname-suggestions button { border: 1px solid var(--accent); background: transparent; color: var(--accent); padding: 6px 8px; font: 700 10px 'IBM Plex Mono', monospace; letter-spacing: .05em; cursor: pointer; transition: background-color .18s var(--ease-out), color .18s var(--ease-out); }
 .nickname-suggestions button:hover, .nickname-suggestions button:focus-visible { background: var(--accent); color: var(--ink); outline: none; }
 [data-theme="light"] .nickname-warning { background: rgba(var(--accent-rgb), .08); }
+
+.setup-fields select, .history-player-picker select, .h2h-pickers select { color-scheme: dark; }
+.setup-fields select option, .history-player-picker select option, .h2h-pickers select option { background: #151815; color: #ffffff; }
+[data-theme="light"] .setup-fields select, [data-theme="light"] .history-player-picker select, [data-theme="light"] .h2h-pickers select { color-scheme: light; background: #ffffff; color: #101410; border-color: rgba(8,9,8,.34); }
+[data-theme="light"] .setup-fields select option, [data-theme="light"] .history-player-picker select option, [data-theme="light"] .h2h-pickers select option { background: #ffffff; color: #101410; }
+[data-theme="light"] .h2h-dialog { color: #101410; border-color: rgba(var(--accent-rgb), .52); }
+[data-theme="light"] .h2h-chart-panel { background: #ffffff; border-color: rgba(8,9,8,.2); }
+[data-theme="light"] .h2h-chart line { stroke: rgba(8,9,8,.2); }
+[data-theme="light"] .h2h-chart .h2h-line-b { stroke: #4b554d; }
+[data-theme="light"] .h2h-chart .h2h-dot-b { fill: #f8faf6; stroke: #4b554d; }
+[data-theme="light"] .h2h-chart .h2h-average-b { stroke: rgba(8,9,8,.48); }
+[data-theme="light"] .h2h-chart .h2h-label-b { fill: #101410; }
+[data-theme="light"] .h2h-legend { color: #4f5b51; border-color: rgba(8,9,8,.18); }
+[data-theme="light"] .h2h-legend .legend-b { background: #4b554d; }
+[data-theme="light"] .h2h-summary-table { border-color: rgba(8,9,8,.2); }
+[data-theme="light"] .h2h-summary-row { border-color: rgba(8,9,8,.12); }
+[data-theme="light"] .h2h-summary-row strong { color: #101410; }
+[data-theme="light"] .h2h-summary-header { color: #4f5b51; }
