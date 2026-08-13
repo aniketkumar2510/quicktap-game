@@ -6,6 +6,11 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Rename Invite team navigation and section to H2H.
+- [x] Add two saved-player selectors for head-to-head comparison.
+- [x] Overlay both players’ reaction trends and averages on one chart.
+- [x] Validate player switching and comparison states.
+
 - [x] Add a player dropdown to Session history.
 - [x] Render the selected player’s cross-session archive and trend.
 - [x] Validate switching between multiple player archives.

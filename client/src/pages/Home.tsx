@@ -62,6 +62,9 @@ export default function Home() {
   const [isLiveMode, setIsLiveMode] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
   const [historyPlayer, setHistoryPlayer] = useState("");
+  const [showH2H, setShowH2H] = useState(false);
+  const [h2hPlayerA, setH2hPlayerA] = useState("");
+  const [h2hPlayerB, setH2hPlayerB] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(() => readStored(STORAGE_KEYS.soundEnabled, true));
   const signalAt = useRef(0);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -234,6 +237,29 @@ export default function Home() {
   const activePlayerName = playerName.trim() || "Unnamed player";
   const historyPlayerOptions = Array.from(new Set([activePlayerName, ...sessions.map((session) => session.winner)])).filter(Boolean).sort((a, b) => a.localeCompare(b));
   const selectedHistoryPlayer = historyPlayerOptions.includes(historyPlayer) ? historyPlayer : activePlayerName;
+  const h2hPlayerOptions = historyPlayerOptions;
+  const selectedH2hPlayerA = h2hPlayerOptions.includes(h2hPlayerA) ? h2hPlayerA : activePlayerName;
+  const selectedH2hPlayerB = h2hPlayerOptions.find((name) => name === h2hPlayerB && name !== selectedH2hPlayerA) ?? h2hPlayerOptions.find((name) => name !== selectedH2hPlayerA) ?? "";
+  const getPlayerEntries = (name: string) => sessions.filter((session) => session.winner === name).slice().sort((a, b) => {
+    const sessionDelta = sessionOrder(a) - sessionOrder(b);
+    return sessionDelta || ((a.round ?? 0) - (b.round ?? 0));
+  });
+  const h2hEntriesA = getPlayerEntries(selectedH2hPlayerA);
+  const h2hEntriesB = getPlayerEntries(selectedH2hPlayerB);
+  const h2hMaxRounds = Math.max(h2hEntriesA.length, h2hEntriesB.length, 1);
+  const h2hAllValues = [...h2hEntriesA, ...h2hEntriesB].map((entry) => entry.best);
+  const h2hMin = h2hAllValues.length ? Math.min(...h2hAllValues) : 0;
+  const h2hMax = h2hAllValues.length ? Math.max(...h2hAllValues) : 1;
+  const h2hPointString = (entries: Session[]) => entries.map((entry, index) => {
+    const x = h2hMaxRounds === 1 ? 240 : 18 + (index / (h2hMaxRounds - 1)) * 444;
+    const y = 18 + ((entry.best - h2hMin) / Math.max(1, h2hMax - h2hMin)) * 104;
+    return `${x},${y}`;
+  }).join(" ");
+  const h2hPointsA = h2hPointString(h2hEntriesA);
+  const h2hPointsB = h2hPointString(h2hEntriesB);
+  const h2hAverageA = h2hEntriesA.length ? Math.round(h2hEntriesA.reduce((sum, entry) => sum + entry.best, 0) / h2hEntriesA.length) : 0;
+  const h2hAverageB = h2hEntriesB.length ? Math.round(h2hEntriesB.reduce((sum, entry) => sum + entry.best, 0) / h2hEntriesB.length) : 0;
+  const h2hAverageY = (average: number) => h2hAllValues.length ? 18 + ((average - h2hMin) / Math.max(1, h2hMax - h2hMin)) * 104 : 70;
   const activePlayerRawEntries = sessions.filter((session) => session.winner === activePlayerName);
   const activePlayerEntries = activePlayerRawEntries.slice().sort((a, b) => {
     const sessionDelta = sessionOrder(a) - sessionOrder(b);
@@ -283,7 +309,7 @@ export default function Home() {
         <nav className="rail-nav" aria-label="Primary">
           <button className="rail-link active"><Zap size={15} /> Play</button>
           <button className="rail-link" onClick={() => setShowHistory(true)}><History size={15} /> Session history</button>
-          <button className="rail-link" onClick={() => toast("Invite link ready", { description: "Share QT-4821 with the room." })}><Users size={15} /> Invite team</button>
+          <button className="rail-link" onClick={() => setShowH2H(true)}><Users size={15} /> H2H</button>
         </nav>
         <div className="rail-bottom">
           <div className="room-label"><span className="status-dot" /> LIVE ROOM</div>
@@ -329,6 +355,7 @@ export default function Home() {
         <div className="panel-footer"><div className="live-mode-toggle"><button className={isLiveMode ? "toggle-on" : ""} onClick={() => setIsLiveMode(!isLiveMode)}><span /></button><div><strong>Live multiplayer</strong><small>{isLiveMode ? "On · results sync live" : "Off · solo practice"}</small></div></div><div className="footer-activity"><div className="activity-bars"><i /><i /><i /><i /><i /></div><span>ACTIVE</span></div></div>
       </aside>
       {showHistory && <div className="history-overlay" role="dialog" aria-modal="true" aria-labelledby="history-title"><div className="history-dialog"><div className="history-dialog-head"><div><div className="eyebrow">SESSION ARCHIVE</div><h2 id="history-title">{selectedHistoryPlayer} / full history</h2><p>All reaction entries logged under {selectedHistoryPlayer}, across every session.</p><label className="history-player-picker"><span>VIEW PLAYER</span><select value={selectedHistoryPlayer} onChange={(event) => setHistoryPlayer(event.target.value)} aria-label="View player history">{historyPlayerOptions.map((name) => <option value={name} key={name}>{name}</option>)}</select></label></div><button className="history-close" onClick={() => setShowHistory(false)} aria-label="Close session history">Close</button></div><div className="history-trend"><div className="history-trend-head"><div><div className="eyebrow">REACTION TREND</div><strong>{activeSessionEntries.length ? `${activeSessionEntries.length} entr${activeSessionEntries.length === 1 ? "y" : "ies"} logged` : "No entries logged"}</strong></div>{activeSessionEntries.length > 1 && <span>LOWER IS FASTER</span>}</div>{activeSessionEntries.length ? <svg className="trend-chart" viewBox="0 0 480 150" role="img" aria-label={`Reaction time trend for ${selectedHistoryPlayer}`}><line x1="18" y1="18" x2="464" y2="18" /><line x1="18" y1="122" x2="464" y2="122" /><line className="trend-average" x1="18" y1={trendAverageY} x2="464" y2={trendAverageY} /><text className="trend-average-label" x="464" y={Math.max(12, trendAverageY - 7)} textAnchor="end">AVG {trendAverage}MS</text><polyline points={trendPoints} />{trendValues.map((value, index) => { const [x, y] = trendPoints.split(" ")[index].split(","); return <g key={`${value}-${index}`}><circle cx={x} cy={y} r="4" /><text x={x} y="143" textAnchor="middle">R{index + 1}</text></g>; })}</svg> : <div className="trend-empty"><Activity size={15} /> Complete a round to plot your reaction trend.</div>}</div><div className="history-dialog-list">{activeSessionEntries.length ? activeSessionEntries.map((session, index) => <div className="history-dialog-row" key={`${session.sessionId}-${session.date}-${session.best}-${index}`}><span>R{String(session.round ?? index + 1).padStart(2, "0")}</span><div><strong>{session.winner}</strong><small>{session.date} · {session.players} players</small></div><b>{session.best}<em>ms</em></b></div>) : <div className="history-dialog-empty"><Clock3 size={18} /><strong>No saved entries for this nickname.</strong><span>Complete a round and it will appear here across every session.</span></div>}</div><div className="history-dialog-actions"><button className="history-clear" onClick={clearSessionHistory}>Clear Session History</button><button className="history-dialog-action" onClick={() => setShowHistory(false)}>Back to play <ArrowRight size={14} /></button></div></div></div>}
+      {showH2H && <div className="history-overlay" role="dialog" aria-modal="true" aria-labelledby="h2h-title"><div className="h2h-dialog"><div className="history-dialog-head"><div><div className="eyebrow">HEAD TO HEAD</div><h2 id="h2h-title">Reaction duel</h2><p>Compare two saved players across every logged session.</p></div><button className="history-close" onClick={() => setShowH2H(false)} aria-label="Close H2H comparison">Close</button></div>{h2hPlayerOptions.length > 1 ? <><div className="h2h-pickers"><label><span>PLAYER A</span><select value={selectedH2hPlayerA} onChange={(event) => setH2hPlayerA(event.target.value)}>{h2hPlayerOptions.map((name) => <option value={name} key={`a-${name}`}>{name}</option>)}</select></label><div className="h2h-vs">VS</div><label><span>PLAYER B</span><select value={selectedH2hPlayerB} onChange={(event) => setH2hPlayerB(event.target.value)}>{h2hPlayerOptions.filter((name) => name !== selectedH2hPlayerA).map((name) => <option value={name} key={`b-${name}`}>{name}</option>)}</select></label></div><div className="h2h-chart-panel"><div className="h2h-chart-head"><div className="eyebrow">REACTION TREND OVERLAY</div><span>LOWER IS FASTER</span></div><svg className="trend-chart h2h-chart" viewBox="0 0 480 150" role="img" aria-label={`Head to head reaction trend comparing ${selectedH2hPlayerA} and ${selectedH2hPlayerB}`}><line x1="18" y1="18" x2="464" y2="18" /><line x1="18" y1="122" x2="464" y2="122" />{h2hPointsA && <polyline className="h2h-line-a" points={h2hPointsA} />}{h2hPointsB && <polyline className="h2h-line-b" points={h2hPointsB} />}{h2hEntriesA.map((entry, index) => { const [x, y] = h2hPointsA.split(" ")[index].split(","); return <circle className="h2h-dot-a" key={`a-dot-${entry.sessionId}-${entry.round ?? index}`} cx={x} cy={y} r="4" />; })}{h2hEntriesB.map((entry, index) => { const [x, y] = h2hPointsB.split(" ")[index].split(","); return <circle className="h2h-dot-b" key={`b-dot-${entry.sessionId}-${entry.round ?? index}`} cx={x} cy={y} r="4" />; })}<line className="h2h-average-a" x1="18" y1={h2hAverageY(h2hAverageA)} x2="464" y2={h2hAverageY(h2hAverageA)} /><line className="h2h-average-b" x1="18" y1={h2hAverageY(h2hAverageB)} x2="464" y2={h2hAverageY(h2hAverageB)} /><text className="h2h-label-a" x="464" y={Math.max(12, h2hAverageY(h2hAverageA) - 7)} textAnchor="end">{selectedH2hPlayerA} AVG {h2hAverageA}MS</text><text className="h2h-label-b" x="464" y={Math.min(142, h2hAverageY(h2hAverageB) + 13)} textAnchor="end">{selectedH2hPlayerB} AVG {h2hAverageB}MS</text></svg><div className="h2h-legend"><span><i className="legend-a" />{selectedH2hPlayerA} · {h2hEntriesA.length} rounds</span><span><i className="legend-b" />{selectedH2hPlayerB} · {h2hEntriesB.length} rounds</span></div></div></> : <div className="h2h-empty"><Users size={18} /><strong>Add another player to unlock H2H.</strong><span>Complete a round under a second nickname, then compare both trend lines here.</span></div>}<button className="history-dialog-action" onClick={() => setShowH2H(false)}>Back to play <ArrowRight size={14} /></button></div></div>}
     </main>
   );
 }
