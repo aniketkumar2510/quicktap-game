@@ -6,6 +6,10 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Restore high-contrast nickname warning and suggestion options in both themes.
+- [x] Replace the user-delete browser prompt with a themed in-app dialog.
+- [x] Prevent deleting a player from creating or switching to Alex.
+- [x] Validate nickname visibility and safe deletion behavior.
 - [x] Add shake animation and red border for taken nickname submissions.
 - [x] Add arrow-key and Enter navigation for nickname suggestions.
 - [x] Add confirmed per-user deletion inside Session history.

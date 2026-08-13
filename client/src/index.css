@@ -122,3 +122,15 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .nickname-input-error { border-color: #dc2626 !important; box-shadow: 0 0 0 2px rgba(220,38,38,.18); }
 @media (max-width: 520px) { .history-player-picker { grid-template-columns: 1fr; align-items: stretch; } .history-player-picker span { margin-bottom: -2px; } .history-delete-player { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .nickname-input-error { animation: none; } }
+
+/* Nickname availability feedback: explicit contrast for every warning and suggestion state. */
+.nickname-warning { background: #151815; border: 1px solid rgba(var(--accent-rgb), .35); color: #ffffff; }
+.nickname-warning strong { color: #d946ef; }
+.nickname-warning > span, .nickname-warning .suggestion-hint { color: #ffffff !important; opacity: 1; }
+.nickname-suggestions button { min-width: 64px; min-height: 30px; background: #0d100d; color: #d946ef; border: 2px solid #d946ef; font-weight: 700; opacity: 1; }
+.nickname-suggestions button:hover, .nickname-suggestions button:focus-visible, .nickname-suggestions button.suggestion-selected { background: #d946ef; color: #101410; outline: none; }
+[data-theme="light"] .nickname-warning { background: #ffffff; border-color: #b423c9; color: #101410; }
+[data-theme="light"] .nickname-warning strong { color: #8f179f; }
+[data-theme="light"] .nickname-warning > span, [data-theme="light"] .nickname-warning .suggestion-hint { color: #101410 !important; }
+[data-theme="light"] .nickname-suggestions button { background: #ffffff; color: #8f179f; border-color: #8f179f; }
+[data-theme="light"] .nickname-suggestions button:hover, [data-theme="light"] .nickname-suggestions button:focus-visible, [data-theme="light"] .nickname-suggestions button.suggestion-selected { background: #d946ef; color: #101410; }
