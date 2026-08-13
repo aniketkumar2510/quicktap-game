@@ -47,6 +47,8 @@ function readStored<T>(key: string, fallback: T): T {
 
 const initialSessions: Session[] = [];
 
+const sessionOrder = (session: Session) => Number(session.sessionId.replace("session-", "")) || 0;
+
 export default function Home() {
   const [gameState, setGameState] = useState<GameState>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
@@ -219,23 +221,22 @@ export default function Home() {
   };
 
   const clearSessionHistory = () => {
-    if (typeof window !== "undefined" && !window.confirm("Clear every logged entry from this session? Your saved best score will remain.")) return;
-    setSessions((current) => current.filter((session) => session.sessionId !== activeSessionId));
+    const playerKey = playerName.trim() || "Unnamed player";
+    if (typeof window !== "undefined" && !window.confirm(`Clear every logged entry for ${playerKey}? Your saved best score will remain.`)) return;
+    setSessions((current) => current.filter((session) => session.winner !== playerKey));
     setRoundTimes([]);
     setReactionTime(null);
     setGameState("idle");
     toast.success("Session history cleared", { description: "Your saved best score was kept." });
   };
 
-  const activeSessions = sessions.filter((session) => session.sessionId === activeSessionId);
   const activePlayerName = playerName.trim() || "Unnamed player";
-  const activePlayerRawEntries = activeSessions.filter((session) => session.winner === activePlayerName);
-  const legacyPlayerEntries = activePlayerRawEntries.filter((session) => session.round === undefined).slice().reverse();
-  const numberedPlayerEntries = activePlayerRawEntries.filter((session) => session.round !== undefined).slice().sort((a, b) => (a.round ?? 0) - (b.round ?? 0));
-  const activePlayerEntries = numberedPlayerEntries.length ? [...legacyPlayerEntries, ...numberedPlayerEntries] : legacyPlayerEntries;
-  const legacySessionEntries = activeSessions.filter((session) => session.round === undefined).slice().reverse();
-  const numberedSessionEntries = activeSessions.filter((session) => session.round !== undefined).slice().sort((a, b) => (a.round ?? 0) - (b.round ?? 0));
-  const activeSessionEntries = numberedSessionEntries.length ? [...legacySessionEntries, ...numberedSessionEntries] : legacySessionEntries;
+  const activePlayerRawEntries = sessions.filter((session) => session.winner === activePlayerName);
+  const activePlayerEntries = activePlayerRawEntries.slice().sort((a, b) => {
+    const sessionDelta = sessionOrder(a) - sessionOrder(b);
+    return sessionDelta || ((a.round ?? 0) - (b.round ?? 0));
+  });
+  const activeSessionEntries = activePlayerEntries;
   const trendValues = activePlayerEntries.map((session) => session.best);
   const trendMax = trendValues.length ? Math.max(...trendValues) : 1;
   const trendMin = trendValues.length ? Math.min(...trendValues) : 0;
@@ -320,7 +321,7 @@ export default function Home() {
         {(showHistory ? activeSessionEntries : activePlayerEntries.slice(0, 2)).map((session, index) => <div className="history-row" key={`${session.sessionId}-${session.round ?? index + 1}-${session.date}-${session.best}-${index}`}><div className="history-icon"><Clock3 size={14} /></div><div className="history-details"><strong>{session.winner}</strong><span>{session.date} · {session.players} players</span></div><div className="history-best">{session.best}<small>ms</small></div></div>)}
         <div className="panel-footer"><div className="live-mode-toggle"><button className={isLiveMode ? "toggle-on" : ""} onClick={() => setIsLiveMode(!isLiveMode)}><span /></button><div><strong>Live multiplayer</strong><small>{isLiveMode ? "On · results sync live" : "Off · solo practice"}</small></div></div><div className="footer-activity"><div className="activity-bars"><i /><i /><i /><i /><i /></div><span>ACTIVE</span></div></div>
       </aside>
-      {showHistory && <div className="history-overlay" role="dialog" aria-modal="true" aria-labelledby="history-title"><div className="history-dialog"><div className="history-dialog-head"><div><div className="eyebrow">SESSION ARCHIVE</div><h2 id="history-title">{activePlayerName} / full history</h2><p>All reaction entries saved for the current session.</p></div><button className="history-close" onClick={() => setShowHistory(false)} aria-label="Close session history">Close</button></div><div className="history-trend"><div className="history-trend-head"><div><div className="eyebrow">REACTION TREND</div><strong>{activeSessionEntries.length ? `${activeSessionEntries.length} entr${activeSessionEntries.length === 1 ? "y" : "ies"} logged` : "No entries logged"}</strong></div>{activePlayerEntries.length > 1 && <span>LOWER IS FASTER</span>}</div>{activePlayerEntries.length ? <svg className="trend-chart" viewBox="0 0 480 150" role="img" aria-label={`Reaction time trend for ${activePlayerName}`}><line x1="18" y1="18" x2="464" y2="18" /><line x1="18" y1="122" x2="464" y2="122" /><line className="trend-average" x1="18" y1={trendAverageY} x2="464" y2={trendAverageY} /><text className="trend-average-label" x="464" y={Math.max(12, trendAverageY - 7)} textAnchor="end">AVG {trendAverage}MS</text><polyline points={trendPoints} />{trendValues.map((value, index) => { const [x, y] = trendPoints.split(" ")[index].split(","); return <g key={`${value}-${index}`}><circle cx={x} cy={y} r="4" /><text x={x} y="143" textAnchor="middle">R{index + 1}</text></g>; })}</svg> : <div className="trend-empty"><Activity size={15} /> Complete a round to plot your reaction trend.</div>}</div><div className="history-dialog-list">{activeSessionEntries.length ? activeSessionEntries.map((session, index) => <div className="history-dialog-row" key={`${session.sessionId}-${session.date}-${session.best}-${index}`}><span>R{String(session.round ?? index + 1).padStart(2, "0")}</span><div><strong>{session.winner}</strong><small>{session.date} · {session.players} players</small></div><b>{session.best}<em>ms</em></b></div>) : <div className="history-dialog-empty"><Clock3 size={18} /><strong>No saved entries for this session.</strong><span>Complete a round and it will appear here.</span></div>}</div><div className="history-dialog-actions"><button className="history-clear" onClick={clearSessionHistory}>Clear Session History</button><button className="history-dialog-action" onClick={() => setShowHistory(false)}>Back to play <ArrowRight size={14} /></button></div></div></div>}
+      {showHistory && <div className="history-overlay" role="dialog" aria-modal="true" aria-labelledby="history-title"><div className="history-dialog"><div className="history-dialog-head"><div><div className="eyebrow">SESSION ARCHIVE</div><h2 id="history-title">{activePlayerName} / full history</h2><p>All reaction entries logged under {activePlayerName}, across every session.</p></div><button className="history-close" onClick={() => setShowHistory(false)} aria-label="Close session history">Close</button></div><div className="history-trend"><div className="history-trend-head"><div><div className="eyebrow">REACTION TREND</div><strong>{activeSessionEntries.length ? `${activeSessionEntries.length} entr${activeSessionEntries.length === 1 ? "y" : "ies"} logged` : "No entries logged"}</strong></div>{activePlayerEntries.length > 1 && <span>LOWER IS FASTER</span>}</div>{activePlayerEntries.length ? <svg className="trend-chart" viewBox="0 0 480 150" role="img" aria-label={`Reaction time trend for ${activePlayerName}`}><line x1="18" y1="18" x2="464" y2="18" /><line x1="18" y1="122" x2="464" y2="122" /><line className="trend-average" x1="18" y1={trendAverageY} x2="464" y2={trendAverageY} /><text className="trend-average-label" x="464" y={Math.max(12, trendAverageY - 7)} textAnchor="end">AVG {trendAverage}MS</text><polyline points={trendPoints} />{trendValues.map((value, index) => { const [x, y] = trendPoints.split(" ")[index].split(","); return <g key={`${value}-${index}`}><circle cx={x} cy={y} r="4" /><text x={x} y="143" textAnchor="middle">R{index + 1}</text></g>; })}</svg> : <div className="trend-empty"><Activity size={15} /> Complete a round to plot your reaction trend.</div>}</div><div className="history-dialog-list">{activeSessionEntries.length ? activeSessionEntries.map((session, index) => <div className="history-dialog-row" key={`${session.sessionId}-${session.date}-${session.best}-${index}`}><span>R{String(session.round ?? index + 1).padStart(2, "0")}</span><div><strong>{session.winner}</strong><small>{session.date} · {session.players} players</small></div><b>{session.best}<em>ms</em></b></div>) : <div className="history-dialog-empty"><Clock3 size={18} /><strong>No saved entries for this nickname.</strong><span>Complete a round and it will appear here across every session.</span></div>}</div><div className="history-dialog-actions"><button className="history-clear" onClick={clearSessionHistory}>Clear Session History</button><button className="history-dialog-action" onClick={() => setShowHistory(false)}>Back to play <ArrowRight size={14} /></button></div></div></div>}
     </main>
   );
 }
