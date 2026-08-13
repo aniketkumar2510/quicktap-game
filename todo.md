@@ -6,6 +6,8 @@
 - [x] Preserve existing reaction states, leaderboard, and session history behavior.
 - [x] Run type checks, production build, and preview verification.
 - [ ] Save an updated project checkpoint.
+- [x] Make light-mode sidebar navigation labels white for overlap contrast.
+- [x] Validate sidebar label readability in light mode.
 - [x] Replace duplicate H2H chart point keys with stable unique keys.
 - [x] Validate the H2H chart no longer emits duplicate-key warnings.
 - [ ] Change light-mode accent items from neon yellow to neon purple.

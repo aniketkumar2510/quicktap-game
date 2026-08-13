@@ -52,3 +52,6 @@ button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--l
 [data-theme="light"] .target-cross, [data-theme="light"] .target-cross:before, [data-theme="light"] .target-cross:after { background: var(--ink); }
 [data-theme="light"] .target-cross { border-color: var(--ink); }
 @media (max-width: 720px) { .theme-toggle { width: 30px; height: 30px; } }
+
+[data-theme="light"] .rail-link, [data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { color: #ffffff; }
+[data-theme="light"] .rail-link:hover, [data-theme="light"] .rail-link.active { background: #111511; }
